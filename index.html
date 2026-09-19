@@ -19,7 +19,7 @@ body{
 }
 
 .app{
-  max-width:700px;
+  max-width:720px;
   margin:auto;
   min-height:100vh;
   background:white;
@@ -28,13 +28,13 @@ body{
 .header{
   background:linear-gradient(135deg,#6c35ff,#4b20d9);
   color:white;
-  padding:22px 18px;
+  padding:24px 18px;
   text-align:center;
 }
 
 .header h1{
-  font-size:27px;
-  margin-bottom:6px;
+  font-size:28px;
+  margin-bottom:7px;
 }
 
 .header p{
@@ -55,7 +55,8 @@ body{
   box-shadow:0 5px 18px rgba(30,40,80,.06);
 }
 
-.label{
+label{
+  display:block;
   font-size:14px;
   font-weight:bold;
   margin-bottom:9px;
@@ -68,16 +69,18 @@ input,textarea,select{
   padding:13px;
   font-size:15px;
   outline:none;
-  background:#fff;
+  background:white;
+}
+
+input:focus,
+textarea:focus,
+select:focus{
+  border-color:#6c35ff;
 }
 
 textarea{
-  min-height:125px;
+  min-height:130px;
   resize:vertical;
-}
-
-input:focus,textarea:focus,select:focus{
-  border-color:#6c35ff;
 }
 
 .row{
@@ -85,11 +88,990 @@ input:focus,textarea:focus,select:focus{
   gap:10px;
 }
 
-.row>div{
+.row > div{
   flex:1;
 }
 
 .subjects{
   display:flex;
   gap:8px;
-  overflow
+  overflow-x:auto;
+  padding-bottom:4px;
+}
+
+.subjects button{
+  flex:0 0 auto;
+  border:1px solid #ddd;
+  background:white;
+  border-radius:20px;
+  padding:9px 14px;
+  font-size:13px;
+}
+
+.subjects button.active{
+  background:#6c35ff;
+  color:white;
+  border-color:#6c35ff;
+}
+
+button{
+  cursor:pointer;
+}
+
+.main-btn{
+  width:100%;
+  border:0;
+  border-radius:13px;
+  padding:15px;
+  background:#6c35ff;
+  color:white;
+  font-size:16px;
+  font-weight:bold;
+  margin-top:10px;
+}
+
+.main-btn:disabled{
+  opacity:.6;
+}
+
+.secondary-btn{
+  border:1px solid #ddd;
+  background:white;
+  border-radius:10px;
+  padding:10px 14px;
+}
+
+.file-box{
+  border:2px dashed #cfd5e3;
+  border-radius:13px;
+  padding:18px;
+  text-align:center;
+  margin-top:10px;
+}
+
+.file-box input{
+  border:0;
+  padding:5px;
+}
+
+.preview{
+  display:none;
+  width:100%;
+  max-height:280px;
+  object-fit:contain;
+  border-radius:12px;
+  margin-top:12px;
+  background:#f3f3f3;
+}
+
+.answer-card{
+  display:none;
+}
+
+.answer{
+  white-space:pre-wrap;
+  line-height:1.65;
+  font-size:15px;
+  overflow-wrap:anywhere;
+}
+
+.answer-actions{
+  display:flex;
+  gap:8px;
+  margin-top:14px;
+  flex-wrap:wrap;
+}
+
+.small{
+  font-size:12px;
+  color:#687083;
+  margin-top:7px;
+}
+
+.status{
+  display:none;
+  text-align:center;
+  padding:12px;
+  color:#6c35ff;
+  font-size:14px;
+}
+
+.spinner{
+  display:inline-block;
+  width:18px;
+  height:18px;
+  border:3px solid #ddd;
+  border-top-color:#6c35ff;
+  border-radius:50%;
+  animation:spin .8s linear infinite;
+  vertical-align:middle;
+  margin-right:7px;
+}
+
+@keyframes spin{
+  to{transform:rotate(360deg)}
+}
+
+.toast{
+  position:fixed;
+  left:50%;
+  bottom:25px;
+  transform:translateX(-50%);
+  background:#222;
+  color:white;
+  padding:12px 18px;
+  border-radius:10px;
+  display:none;
+  z-index:9999;
+  max-width:90%;
+  text-align:center;
+}
+
+.footer{
+  text-align:center;
+  color:#888;
+  font-size:12px;
+  padding:20px;
+}
+
+@media(max-width:500px){
+  .row{
+    flex-direction:column;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+  <div class="header">
+    <h1>Question AI</h1>
+    <p>Ask questions • Upload image • Get step-by-step answers</p>
+  </div>
+
+  <div class="section">
+
+    <!-- API KEY -->
+    <div class="card">
+      <label>Gemini API Key</label>
+
+      <input
+        id="apiKey"
+        type="password"
+        placeholder="Apni Gemini API key yahan paste karo"
+      >
+
+      <button class="main-btn" onclick="saveKey()">
+        Save API Key
+      </button>
+
+      <div class="small">
+        API key sirf is browser session me save hogi.
+      </div>
+    </div>
+
+    <!-- SUBJECT -->
+    <div class="card">
+      <label>Subject</label>
+
+      <div class="subjects">
+
+        <button class="active" onclick="selectSubject(this,'Auto')">
+          Auto
+        </button>
+
+        <button onclick="selectSubject(this,'Maths')">
+          Maths
+        </button>
+
+        <button onclick="selectSubject(this,'Physics')">
+          Physics
+        </button>
+
+        <button onclick="selectSubject(this,'Chemistry')">
+          Chemistry
+        </button>
+
+        <button onclick="selectSubject(this,'Biology')">
+          Biology
+        </button>
+
+        <button onclick="selectSubject(this,'Hindi')">
+          Hindi
+        </button>
+
+        <button onclick="selectSubject(this,'English')">
+          English
+        </button>
+
+      </div>
+    </div>
+
+    <!-- QUESTION -->
+    <div class="card">
+
+      <label>Apna Question</label>
+
+      <textarea
+        id="question"
+        placeholder="Example: 253 + 5 = ?"
+      ></textarea>
+
+      <!-- IMAGE -->
+      <div class="file-box">
+
+        <b>Question ki image upload karo</b>
+
+        <p class="small">
+          Maths, Physics, Chemistry, Biology etc.
+        </p>
+
+        <input
+          id="imageInput"
+          type="file"
+          accept="image/*"
+          onchange="handleImage(event)"
+        >
+
+        <img id="preview" class="preview">
+
+      </div>
+
+    </div>
+
+    <!-- SETTINGS -->
+    <div class="card">
+
+      <div class="row">
+
+        <div>
+          <label>Language</label>
+
+          <select id="language">
+            <option>Hindi</option>
+            <option>English</option>
+            <option>Hinglish</option>
+          </select>
+        </div>
+
+        <div>
+          <label>Level</label>
+
+          <select id="level">
+            <option>School</option>
+            <option>Class 6-8</option>
+            <option>Class 9-10</option>
+            <option>Class 11-12</option>
+            <option>College</option>
+          </select>
+        </div>
+
+      </div>
+
+      <button
+        id="solveBtn"
+        class="main-btn"
+        onclick="solveQuestion()"
+      >
+        Solve Question
+      </button>
+
+    </div>
+
+    <!-- LOADING -->
+    <div id="status" class="status">
+      <span class="spinner"></span>
+      Question solve ho raha hai...
+    </div>
+
+    <!-- ANSWER -->
+    <div id="answerCard" class="card answer-card">
+
+      <label>Answer</label>
+
+      <div id="answer" class="answer"></div>
+
+      <div class="answer-actions">
+
+        <button
+          class="secondary-btn"
+          onclick="copyAnswer()"
+        >
+          📋 Copy
+        </button>
+
+        <button
+          class="secondary-btn"
+          onclick="speakAnswer()"
+        >
+          🔊 Speak
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+  <div class="footer">
+    Question AI • Educational Assistant
+  </div>
+
+</div>
+
+<div id="toast" class="toast"></div>
+
+
+<script>
+
+let selectedSubject = "Auto";
+
+let imageBase64 = "";
+let imageMime = "";
+
+
+// =========================
+// LOAD SAVED API KEY
+// =========================
+
+const savedKey =
+  sessionStorage.getItem("gemini_api_key");
+
+if(savedKey){
+
+  document.getElementById("apiKey").value =
+    savedKey;
+
+}
+
+
+// =========================
+// TOAST
+// =========================
+
+function showToast(message){
+
+  const toast =
+    document.getElementById("toast");
+
+  toast.innerText = message;
+
+  toast.style.display = "block";
+
+  setTimeout(function(){
+
+    toast.style.display = "none";
+
+  },3000);
+
+}
+
+
+// =========================
+// SAVE API KEY
+// =========================
+
+function saveKey(){
+
+  const key =
+    document.getElementById("apiKey")
+    .value
+    .trim();
+
+  if(!key){
+
+    showToast("API key paste karo");
+
+    return;
+  }
+
+  sessionStorage.setItem(
+    "gemini_api_key",
+    key
+  );
+
+  showToast("API key save ho gayi ✓");
+
+}
+
+
+// =========================
+// SUBJECT
+// =========================
+
+function selectSubject(button,subject){
+
+  selectedSubject = subject;
+
+  document
+    .querySelectorAll(".subjects button")
+    .forEach(function(btn){
+
+      btn.classList.remove("active");
+
+    });
+
+  button.classList.add("active");
+
+}
+
+
+// =========================
+// IMAGE UPLOAD
+// =========================
+
+function handleImage(event){
+
+  const file =
+    event.target.files[0];
+
+  if(!file){
+
+    imageBase64 = "";
+    imageMime = "";
+
+    return;
+  }
+
+  if(!file.type.startsWith("image/")){
+
+    showToast("Sirf image upload karo");
+
+    return;
+  }
+
+  const reader =
+    new FileReader();
+
+  reader.onload = function(e){
+
+    const img =
+      new Image();
+
+    img.onload = function(){
+
+      const maxSize = 1600;
+
+      let width = img.width;
+      let height = img.height;
+
+      if(width > maxSize || height > maxSize){
+
+        if(width > height){
+
+          height =
+            Math.round(
+              height * maxSize / width
+            );
+
+          width = maxSize;
+
+        }else{
+
+          width =
+            Math.round(
+              width * maxSize / height
+            );
+
+          height = maxSize;
+
+        }
+
+      }
+
+      const canvas =
+        document.createElement("canvas");
+
+      canvas.width = width;
+      canvas.height = height;
+
+      const ctx =
+        canvas.getContext("2d");
+
+      ctx.drawImage(
+        img,
+        0,
+        0,
+        width,
+        height
+      );
+
+      const compressed =
+        canvas.toDataURL(
+          "image/jpeg",
+          0.82
+        );
+
+      imageBase64 =
+        compressed.split(",")[1];
+
+      imageMime =
+        "image/jpeg";
+
+      const preview =
+        document.getElementById("preview");
+
+      preview.src =
+        compressed;
+
+      preview.style.display =
+        "block";
+
+      showToast("Image ready ✓");
+
+    };
+
+    img.src = e.target.result;
+
+  };
+
+  reader.readAsDataURL(file);
+
+}
+
+
+// =========================
+// CLEAN AI ANSWER
+// =========================
+
+function cleanAIAnswer(text){
+
+  if(!text) return "";
+
+  return text
+
+    // Code fences
+    .replace(/```[a-zA-Z]*\n?/g,"")
+    .replace(/```/g,"")
+
+    // Dollar math
+    .replace(/\$\$/g,"")
+    .replace(/\$/g,"")
+
+    // Markdown bold / italic
+    .replace(/\*\*/g,"")
+    .replace(/\*/g,"")
+
+    // Markdown headings
+    .replace(/^#{1,6}\s*/gm,"")
+
+    // LaTeX text
+    .replace(/\\text\{([^}]*)\}/g,"$1")
+
+    .replace(/\\mathrm\{([^}]*)\}/g,"$1")
+
+    .replace(/\\mathbf\{([^}]*)\}/g,"$1")
+
+    // Fractions
+    .replace(
+      /\\frac\{([^}]*)\}\{([^}]*)\}/g,
+      "$1/$2"
+    )
+
+    // Common LaTeX
+    .replace(/\\quad/g," ")
+
+    .replace(/\\qquad/g," ")
+
+    .replace(/\\,/g," ")
+
+    .replace(/\\;/g," ")
+
+    .replace(/\\!/g,"")
+
+    .replace(/\\left/g,"")
+
+    .replace(/\\right/g,"")
+
+    .replace(/\\begin\{[^}]*\}/g,"")
+
+    .replace(/\\end\{[^}]*\}/g,"")
+
+    // Remove excessive spaces
+    .replace(/[ \t]+/g," ")
+
+    // Excessive empty lines
+    .replace(/\n{3,}/g,"\n\n")
+
+    .trim();
+
+}
+
+
+// =========================
+// SOLVE QUESTION
+// =========================
+
+async function solveQuestion(){
+
+  const key =
+    document
+      .getElementById("apiKey")
+      .value
+      .trim();
+
+  const question =
+    document
+      .getElementById("question")
+      .value
+      .trim();
+
+  const language =
+    document
+      .getElementById("language")
+      .value;
+
+  const level =
+    document
+      .getElementById("level")
+      .value;
+
+  if(!key){
+
+    showToast(
+      "Pehle Gemini API key save karo"
+    );
+
+    return;
+  }
+
+  if(!question && !imageBase64){
+
+    showToast(
+      "Question ya image do"
+    );
+
+    return;
+  }
+
+  sessionStorage.setItem(
+    "gemini_api_key",
+    key
+  );
+
+
+  const status =
+    document.getElementById("status");
+
+  const answerCard =
+    document.getElementById("answerCard");
+
+  const answer =
+    document.getElementById("answer");
+
+  const solveBtn =
+    document.getElementById("solveBtn");
+
+
+  status.style.display =
+    "block";
+
+  answerCard.style.display =
+    "none";
+
+  solveBtn.disabled =
+    true;
+
+
+  const instruction = `
+
+You are Question AI, a helpful educational assistant.
+
+Subject:
+${selectedSubject}
+
+Student level:
+${level}
+
+Answer language:
+${language}
+
+Rules:
+
+1. Solve the student's question accurately.
+
+2. If it is a maths or science problem,
+show the method step by step.
+
+3. Explain formulas clearly.
+
+4. Keep the explanation easy to understand.
+
+5. If an image is provided,
+carefully read the question from the image.
+
+6. Do not invent information that is not visible in the image.
+
+7. Give the final answer clearly at the end.
+
+8. For Hindi use simple Hindi.
+
+9. For Hinglish use easy Hindi written with English letters.
+
+10. Do not unnecessarily make the answer extremely long.
+
+11. Use plain text only.
+
+12. NEVER use $ or $$.
+
+13. NEVER use LaTeX.
+
+14. NEVER use Markdown bold using **.
+
+15. NEVER use Markdown headings using #.
+
+16. NEVER use \\frac, \\quad, \\begin or \\end.
+
+17. Write mathematical calculations in simple plain text.
+
+18. Example:
+23 + 2 = 25
+
+19. Do not put the answer inside a code block.
+
+20. Do not use complicated formatting.
+
+21. Make the final answer easy to read on a mobile phone.
+
+Student question:
+
+${question || "Please solve the question shown in the uploaded image."}
+
+`;
+
+
+  try{
+
+    const parts = [
+      {
+        text: instruction
+      }
+    ];
+
+
+    if(imageBase64){
+
+      parts.push({
+
+        inline_data:{
+          mime_type:imageMime,
+          data:imageBase64
+        }
+
+      });
+
+    }
+
+
+    const response =
+      await fetch(
+
+        "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent",
+
+        {
+
+          method:"POST",
+
+          headers:{
+
+            "Content-Type":
+              "application/json",
+
+            "x-goog-api-key":
+              key
+
+          },
+
+          body:JSON.stringify({
+
+            contents:[
+
+              {
+
+                role:"user",
+
+                parts:parts
+
+              }
+
+            ]
+
+          })
+
+        }
+
+      );
+
+
+    const data =
+      await response.json();
+
+
+    if(!response.ok){
+
+      let message =
+        "Gemini API error";
+
+      if(
+        data &&
+        data.error &&
+        data.error.message
+      ){
+
+        message =
+          data.error.message;
+
+      }
+
+      throw new Error(message);
+
+    }
+
+
+    let result = "";
+
+
+    if(
+      data.candidates &&
+      data.candidates[0] &&
+      data.candidates[0].content &&
+      data.candidates[0].content.parts
+    ){
+
+      data.candidates[0]
+        .content
+        .parts
+        .forEach(function(part){
+
+          if(part.text){
+
+            result +=
+              part.text;
+
+          }
+
+        });
+
+    }
+
+
+    if(!result){
+
+      throw new Error(
+        "AI ne koi answer return nahi kiya."
+      );
+
+    }
+
+
+    const cleanResult =
+      cleanAIAnswer(result);
+
+
+    answer.innerText =
+      cleanResult;
+
+    answerCard.style.display =
+      "block";
+
+
+  }catch(error){
+
+    answer.innerText =
+      "Error: " + error.message;
+
+    answerCard.style.display =
+      "block";
+
+  }
+
+
+  status.style.display =
+    "none";
+
+  solveBtn.disabled =
+    false;
+
+}
+
+
+// =========================
+// COPY ANSWER
+// =========================
+
+function copyAnswer(){
+
+  const text =
+    document
+      .getElementById("answer")
+      .innerText;
+
+  if(!text){
+
+    return;
+  }
+
+  navigator.clipboard
+    .writeText(text)
+    .then(function(){
+
+      showToast(
+        "Answer copy ho gaya ✓"
+      );
+
+    })
+    .catch(function(){
+
+      showToast(
+        "Copy nahi ho paya"
+      );
+
+    });
+
+}
+
+
+// =========================
+// SPEAK
+// =========================
+
+function speakAnswer(){
+
+  const text =
+    document
+      .getElementById("answer")
+      .innerText;
+
+  if(!text){
+
+    return;
+  }
+
+  if(!("speechSynthesis" in window)){
+
+    showToast(
+      "Speech browser me supported nahi hai"
+    );
+
+    return;
+  }
+
+  window.speechSynthesis.cancel();
+
+  const speech =
+    new SpeechSynthesisUtterance(text);
+
+  speech.rate = 0.9;
+
+  window.speechSynthesis.speak(
+    speech
+  );
+
+}
+
+</script>
+
+</body>
+  </html>
