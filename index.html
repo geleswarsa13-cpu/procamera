@@ -1,915 +1,55 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<meta name="description"
-content="Question AI - Ask questions, upload images and get educational step-by-step answers.">
-
-<meta name="robots" content="index, follow">
-
-<title>Question AI - Educational AI Assistant</title>
-
-<style>
-
-*{
-  box-sizing:border-box;
-  margin:0;
-  padding:0;
-  font-family:Arial,sans-serif;
-}
-
-html{
-  scroll-behavior:smooth;
-}
-
-body{
-  background:#f4f7fb;
-  color:#172033;
-}
-
-.app{
-  max-width:720px;
-  margin:auto;
-  min-height:100vh;
-  background:white;
-}
-
-.header{
-  background:linear-gradient(135deg,#6c35ff,#4b20d9);
-  color:white;
-  padding:24px 18px;
-  text-align:center;
-}
-
-.header h1{
-  font-size:28px;
-  margin-bottom:7px;
-}
-
-.header p{
-  font-size:13px;
-  opacity:.9;
-}
-
-.section{
-  padding:15px;
-}
-
-.card{
-  background:white;
-  border:1px solid #e5e9f2;
-  border-radius:16px;
-  padding:15px;
-  margin-bottom:14px;
-  box-shadow:0 5px 18px rgba(30,40,80,.06);
-}
-
-label{
-  display:block;
-  font-size:14px;
-  font-weight:bold;
-  margin-bottom:9px;
-}
-
-input,
-textarea,
-select{
-  width:100%;
-  border:1px solid #d9deea;
-  border-radius:12px;
-  padding:13px;
-  font-size:15px;
-  outline:none;
-  background:white;
-}
-
-input:focus,
-textarea:focus,
-select:focus{
-  border-color:#6c35ff;
-}
-
-textarea{
-  min-height:130px;
-  resize:vertical;
-}
-
-.row{
-  display:flex;
-  gap:10px;
-}
-
-.row > div{
-  flex:1;
-}
-
-.subjects{
-  display:flex;
-  gap:8px;
-  overflow-x:auto;
-  padding-bottom:4px;
-}
-
-.subjects button{
-  flex:0 0 auto;
-  border:1px solid #ddd;
-  background:white;
-  border-radius:20px;
-  padding:9px 14px;
-  font-size:13px;
-}
-
-.subjects button.active{
-  background:#6c35ff;
-  color:white;
-  border-color:#6c35ff;
-}
-
-button{
-  cursor:pointer;
-}
-
-.main-btn{
-  width:100%;
-  border:0;
-  border-radius:13px;
-  padding:15px;
-  background:#6c35ff;
-  color:white;
-  font-size:16px;
-  font-weight:bold;
-  margin-top:10px;
-}
-
-.main-btn:disabled{
-  opacity:.6;
-}
-
-.secondary-btn{
-  border:1px solid #ddd;
-  background:white;
-  border-radius:10px;
-  padding:10px 14px;
-}
-
-.file-box{
-  border:2px dashed #cfd5e3;
-  border-radius:13px;
-  padding:18px;
-  text-align:center;
-  margin-top:10px;
-}
-
-.file-box input{
-  border:0;
-  padding:5px;
-}
-
-.preview{
-  display:none;
-  width:100%;
-  max-height:280px;
-  object-fit:contain;
-  border-radius:12px;
-  margin-top:12px;
-  background:#f3f3f3;
-}
-
-.answer-card{
-  display:none;
-}
-
-.answer{
-  white-space:pre-wrap;
-  line-height:1.65;
-  font-size:15px;
-  overflow-wrap:anywhere;
-}
-
-.answer-actions{
-  display:flex;
-  gap:8px;
-  margin-top:14px;
-  flex-wrap:wrap;
-}
-
-.small{
-  font-size:12px;
-  color:#687083;
-  margin-top:7px;
-}
-
-.status{
-  display:none;
-  text-align:center;
-  padding:12px;
-  color:#6c35ff;
-  font-size:14px;
-}
-
-.spinner{
-  display:inline-block;
-  width:18px;
-  height:18px;
-  border:3px solid #ddd;
-  border-top-color:#6c35ff;
-  border-radius:50%;
-  animation:spin .8s linear infinite;
-  vertical-align:middle;
-  margin-right:7px;
-}
-
-@keyframes spin{
-  to{
-    transform:rotate(360deg);
-  }
-}
-
-.toast{
-  position:fixed;
-  left:50%;
-  bottom:25px;
-  transform:translateX(-50%);
-  background:#222;
-  color:white;
-  padding:12px 18px;
-  border-radius:10px;
-  display:none;
-  z-index:9999;
-  max-width:90%;
-  text-align:center;
-}
-
-.footer{
-  text-align:center;
-  color:#888;
-  font-size:12px;
-  padding:20px 15px 28px;
-}
-
-.footer-links{
-  display:flex;
-  justify-content:center;
-  flex-wrap:wrap;
-  gap:8px;
-  margin-bottom:12px;
-}
-
-.footer-links button{
-  border:0;
-  background:transparent;
-  color:#6c35ff;
-  font-size:12px;
-  padding:4px 6px;
-}
-
-.info-page{
-  display:none;
-  padding:20px 15px 30px;
-}
-
-.info-page h2{
-  font-size:24px;
-  margin-bottom:14px;
-  color:#172033;
-}
-
-.info-page h3{
-  font-size:17px;
-  margin:20px 0 8px;
-  color:#4b20d9;
-}
-
-.info-page p{
-  font-size:14px;
-  line-height:1.7;
-  color:#4d5668;
-  margin-bottom:10px;
-}
-
-.back-btn{
-  border:0;
-  background:#6c35ff;
-  color:white;
-  padding:11px 16px;
-  border-radius:10px;
-  font-weight:bold;
-  margin-bottom:18px;
-}
-
-.contact-box{
-  background:#f7f5ff;
-  border-radius:12px;
-  padding:15px;
-  margin-top:15px;
-}
-
-.contact-box p{
-  margin-bottom:5px;
-}
-
-@media(max-width:500px){
-
-  .row{
-    flex-direction:column;
-  }
-
-}
-
-</style>
-</head>
-
-<body>
-
-<div class="app">
-
-<!-- ================= MAIN PAGE ================= -->
-
-<div id="mainPage">
-
-  <div class="header">
-
-    <h1>Question AI</h1>
-
-    <p>
-      Ask questions • Upload image • Get step-by-step answers
-    </p>
-
-  </div>
-
-
-  <div class="section">
-
-
-    <!-- ================= SUBJECT ================= -->
-
-    <div class="card">
-
-      <label>Subject</label>
-
-      <div class="subjects">
-
-        <button
-          class="active"
-          onclick="selectSubject(this,'Auto')">
-          Auto
-        </button>
-
-        <button
-          onclick="selectSubject(this,'Maths')">
-          Maths
-        </button>
-
-        <button
-          onclick="selectSubject(this,'Physics')">
-          Physics
-        </button>
-
-        <button
-          onclick="selectSubject(this,'Chemistry')">
-          Chemistry
-        </button>
-
-        <button
-          onclick="selectSubject(this,'Biology')">
-          Biology
-        </button>
-
-        <button
-          onclick="selectSubject(this,'Hindi')">
-          Hindi
-        </button>
-
-        <button
-          onclick="selectSubject(this,'English')">
-          English
-        </button>
-
-      </div>
-
-    </div>
-
-
-    <!-- ================= QUESTION ================= -->
-
-    <div class="card">
-
-      <label>
-        Apna Question
-      </label>
-
-      <textarea
-        id="question"
-        placeholder="Example: 253 + 5 = ?"
-      ></textarea>
-
-
-      <div class="file-box">
-
-        <b>
-          Question ki image upload karo
-        </b>
-
-        <p class="small">
-          Maths, Physics, Chemistry, Biology etc.
-        </p>
-
-
-        <input
-          id="imageInput"
-          type="file"
-          accept="image/*"
-          onchange="handleImage(event)"
-        >
-
-
-        <img
-          id="preview"
-          class="preview"
-        >
-
-      </div>
-
-    </div>
-
-
-    <!-- ================= SETTINGS ================= -->
-
-    <div class="card">
-
-      <div class="row">
-
-
-        <div>
-
-          <label>
-            Language
-          </label>
-
-          <select id="language">
-
-            <option>
-              Hindi
-            </option>
-
-            <option>
-              English
-            </option>
-
-            <option>
-              Hinglish
-            </option>
-
-          </select>
-
-        </div>
-
-
-        <div>
-
-          <label>
-            Level
-          </label>
-
-          <select id="level">
-
-            <option>
-              School
-            </option>
-
-            <option>
-              Class 6-8
-            </option>
-
-            <option>
-              Class 9-10
-            </option>
-
-            <option>
-              Class 11-12
-            </option>
-
-            <option>
-              College
-            </option>
-
-          </select>
-
-        </div>
-
-      </div>
-
-
-      <button
-        id="solveBtn"
-        class="main-btn"
-        onclick="solveQuestion()">
-
-        Solve Question
-
-      </button>
-
-    </div>
-
-
-    <!-- ================= LOADING ================= -->
-
-    <div
-      id="status"
-      class="status">
-
-      <span class="spinner"></span>
-
-      Question solve ho raha hai...
-
-    </div>
-
-
-    <!-- ================= ANSWER ================= -->
-
-    <div
-      id="answerCard"
-      class="card answer-card">
-
-      <label>
-        Answer
-      </label>
-
-
-      <div
-        id="answer"
-        class="answer">
-      </div>
-
-
-      <div class="answer-actions">
-
-
-        <button
-          class="secondary-btn"
-          onclick="copyAnswer()">
-
-          📋 Copy
-
-        </button>
-
-
-        <button
-          class="secondary-btn"
-          onclick="speakAnswer()">
-
-          🔊 Speak
-
-        </button>
-
-
-      </div>
-
-    </div>
-
-
-  </div>
-
-</div>
-
-
-<!-- ================= ABOUT ================= -->
-
-<div
-  id="aboutPage"
-  class="info-page">
-
-  <button
-    class="back-btn"
-    onclick="showMain()">
-
-    ← Back
-
-  </button>
-
-
-  <h2>
-    About Question AI
-  </h2>
-
-
-  <p>
-    Question AI is an educational assistant designed to help
-    students understand questions in a simple and easy way.
-  </p>
-
-
-  <p>
-    Users can type a question or upload an image of a question
-    and receive an AI-generated explanation.
-  </p>
-
-
-  <h3>
-    Subjects
-  </h3>
-
-
-  <p>
-    Maths, Physics, Chemistry, Biology, Hindi, English and
-    other educational questions are supported.
-  </p>
-
-
-  <h3>
-    Our Goal
-  </h3>
-
-
-  <p>
-    Our goal is to make learning easier and provide clear,
-    step-by-step educational explanations.
-  </p>
-
-</div>
-
-
-<!-- ================= CONTACT ================= -->
-
-<div
-  id="contactPage"
-  class="info-page">
-
-  <button
-    class="back-btn"
-    onclick="showMain()">
-
-    ← Back
-
-  </button>
-
-
-  <h2>
-    Contact Us
-  </h2>
-
-
-  <p>
-    If you have questions, suggestions, feedback or notice a
-    problem with Question AI, you can contact us.
-  </p>
-
-
-  <div class="contact-box">
-
-    <p>
-      <b>Email:</b>
-    </p>
-
-    <p>
-      Add your contact email here.
-    </p>
-
-  </div>
-
-
-  <p class="small">
-    Replace the email text above with your real support email
-    before publishing the final version.
-  </p>
-
-</div>
-
-
-<!-- ================= PRIVACY ================= -->
-
-<div
-  id="privacyPage"
-  class="info-page">
-
-  <button
-    class="back-btn"
-    onclick="showMain()">
-
-    ← Back
-
-  </button>
-
-
-  <h2>
-    Privacy Policy
-  </h2>
-
-
-  <p>
-    Your privacy is important to us. This Privacy Policy
-    explains how Question AI handles information when you use
-    the website.
-  </p>
-
-
-  <h3>
-    Questions and Images
-  </h3>
-
-
-  <p>
-    Questions and images submitted through the website may be
-    sent to the AI service in order to generate an answer.
-  </p>
-
-
-  <h3>
-    API Key
-  </h3>
-
-
-  <p>
-    Question AI uses a server-side API configuration.
-    Users do not need to enter an API key in the website.
-  </p>
-
-
-  <h3>
-    Cookies
-  </h3>
-
-
-  <p>
-    This website may use browser storage required for basic
-    functionality. Advertising services, if added in the
-    future, may use cookies or similar technologies according
-    to their own policies.
-  </p>
-
-
-  <h3>
-    Third-Party Services
-  </h3>
-
-
-  <p>
-    Question AI uses third-party AI services to process
-    questions and generate answers. Their own terms and
-    privacy policies may also apply.
-  </p>
-
-
-  <h3>
-    Updates
-  </h3>
-
-
-  <p>
-    This Privacy Policy may be updated when the website or its
-    services change.
-  </p>
-
-</div>
-
-
-<!-- ================= TERMS ================= -->
-
-<div
-  id="termsPage"
-  class="info-page">
-
-  <button
-    class="back-btn"
-    onclick="showMain()">
-
-    ← Back
-
-  </button>
-
-
-  <h2>
-    Terms & Conditions
-  </h2>
-
-
-  <p>
-    By using Question AI, you agree to use the service
-    responsibly and for lawful educational purposes.
-  </p>
-
-
-  <h3>
-    AI Answers
-  </h3>
-
-
-  <p>
-    AI-generated answers may contain mistakes. Users should
-    verify important information with teachers, textbooks or
-    reliable educational sources.
-  </p>
-
-
-  <h3>
-    Acceptable Use
-  </h3>
-
-
-  <p>
-    Do not use the website for unlawful activity, abuse,
-    attempts to disrupt the service, or misuse of third-party
-    services.
-  </p>
-
-
-  <h3>
-    Service Availability
-  </h3>
-
-
-  <p>
-    We may change, suspend or improve parts of the website at
-    any time.
-  </p>
-
-
-  <h3>
-    Educational Purpose
-  </h3>
-
-
-  <p>
-    Question AI is intended as an educational assistance tool
-    and should not be treated as a replacement for a qualified
-    teacher or professional advice.
-  </p>
-
-</div>
-
-
-<!-- ================= FOOTER ================= -->
-
-<div class="footer">
-
-
-  <div class="footer-links">
-
-
-    <button
-      onclick="showPage('aboutPage')">
-
-      About
-
-    </button>
-
-
-    <button
-      onclick="showPage('contactPage')">
-
-      Contact
-
-    </button>
-
-
-    <button
-      onclick="showPage('privacyPage')">
-
-      Privacy Policy
-
-    </button>
-
-
-    <button
-      onclick="showPage('termsPage')">
-
-      Terms & Conditions
-
-    </button>
-
-
-  </div>
-
-
-  Question AI • Educational Assistant
-
-
-</div>
-
-
-</div>
-
-
-<div
-  id="toast"
-  class="toast">
-</div>
-
-
 <script>
 
-
-// =========================
-// VARIABLES
-// =========================
-
-let selectedSubject = "Auto";
-
-let imageBase64 = "";
-
 let imageMime = "";
+
+
+// =========================
+// HEIC CONVERTER LOADER
+// =========================
+
+function loadHEICConverter(){
+
+  return new Promise(function(resolve,reject){
+
+    if(typeof heic2any !== "undefined"){
+
+      resolve();
+
+      return;
+
+    }
+
+    const script =
+      document.createElement("script");
+
+    script.src =
+      "https://cdn.jsdelivr.net/npm/heic2any@0.0.4/dist/heic2any.min.js";
+
+    script.onload =
+      function(){
+
+        resolve();
+
+      };
+
+    script.onerror =
+      function(){
+
+        reject(
+          new Error(
+            "HEIC converter load nahi hua."
+          )
+        );
+
+      };
+
+    document.head.appendChild(
+      script
+    );
+
+  });
+
+}
 
 
 // =========================
@@ -961,14 +101,23 @@ function showToast(message){
   const toast =
     document.getElementById("toast");
 
-  toast.innerText = message;
+  if(!toast){
 
-  toast.style.display = "block";
+    return;
+
+  }
+
+  toast.innerText =
+    message;
+
+  toast.style.display =
+    "block";
 
 
   setTimeout(function(){
 
-    toast.style.display = "none";
+    toast.style.display =
+      "none";
 
   },3000);
 
@@ -981,28 +130,34 @@ function showToast(message){
 
 function selectSubject(button,subject){
 
-  selectedSubject = subject;
+  selectedSubject =
+    subject;
 
 
   document
     .querySelectorAll(".subjects button")
     .forEach(function(btn){
 
-      btn.classList.remove("active");
+      btn.classList.remove(
+        "active"
+      );
 
     });
 
 
-  button.classList.add("active");
+  button.classList.add(
+    "active"
+  );
 
 }
 
 
 // =========================
 // IMAGE UPLOAD
+// HEIC / HEIF SUPPORT
 // =========================
 
-function handleImage(event){
+async function handleImage(event){
 
   const file =
     event.target.files[0];
@@ -1019,140 +174,288 @@ function handleImage(event){
   }
 
 
-  if(!file.type.startsWith("image/")){
+  try{
 
-    showToast(
-      "Sirf image upload karo"
-    );
-
-    return;
-
-  }
+    let uploadFile =
+      file;
 
 
-  const reader =
-    new FileReader();
+    const fileName =
+      file.name.toLowerCase();
 
 
-  reader.onload = function(e){
-
-    const img =
-      new Image();
-
-
-    img.onload = function(){
-
-      const maxSize = 1600;
+    const isHEIC =
+      fileName.endsWith(".heic") ||
+      fileName.endsWith(".heif") ||
+      file.type === "image/heic" ||
+      file.type === "image/heif";
 
 
-      let width =
-        img.width;
+    // =========================
+    // HEIC → JPEG
+    // =========================
 
-      let height =
-        img.height;
-
-
-      if(
-        width > maxSize ||
-        height > maxSize
-      ){
-
-        if(width > height){
-
-          height =
-            Math.round(
-              height * maxSize / width
-            );
-
-          width =
-            maxSize;
-
-        }else{
-
-          width =
-            Math.round(
-              width * maxSize / height
-            );
-
-          height =
-            maxSize;
-
-        }
-
-      }
-
-
-      const canvas =
-        document.createElement(
-          "canvas"
-        );
-
-
-      canvas.width =
-        width;
-
-      canvas.height =
-        height;
-
-
-      const ctx =
-        canvas.getContext(
-          "2d"
-        );
-
-
-      ctx.drawImage(
-        img,
-        0,
-        0,
-        width,
-        height
-      );
-
-
-      const compressed =
-        canvas.toDataURL(
-          "image/jpeg",
-          0.82
-        );
-
-
-      imageBase64 =
-        compressed.split(",")[1];
-
-
-      imageMime =
-        "image/jpeg";
-
-
-      const preview =
-        document.getElementById(
-          "preview"
-        );
-
-
-      preview.src =
-        compressed;
-
-
-      preview.style.display =
-        "block";
-
+    if(isHEIC){
 
       showToast(
-        "Image ready ✓"
+        "HEIC photo convert ho rahi hai..."
       );
 
-    };
+
+      await loadHEICConverter();
 
 
-    img.src =
-      e.target.result;
+      const converted =
+        await heic2any({
 
-  };
+          blob:
+            file,
+
+          toType:
+            "image/jpeg",
+
+          quality:
+            0.82
+
+        });
 
 
-  reader.readAsDataURL(file);
+      uploadFile =
+        Array.isArray(converted)
+          ? converted[0]
+          : converted;
+
+    }
+
+
+    // =========================
+    // NORMAL IMAGE CHECK
+    // =========================
+
+    if(
+      !isHEIC &&
+      !file.type.startsWith("image/")
+    ){
+
+      showToast(
+        "Sirf image upload karo"
+      );
+
+      event.target.value =
+        "";
+
+      return;
+
+    }
+
+
+    // =========================
+    // FILE READER
+    // =========================
+
+    const reader =
+      new FileReader();
+
+
+    reader.onload =
+      function(e){
+
+        const img =
+          new Image();
+
+
+        img.onload =
+          function(){
+
+            const maxSize =
+              1600;
+
+
+            let width =
+              img.width;
+
+            let height =
+              img.height;
+
+
+            // =========================
+            // RESIZE IMAGE
+            // =========================
+
+            if(
+              width > maxSize ||
+              height > maxSize
+            ){
+
+              if(width > height){
+
+                height =
+                  Math.round(
+                    height *
+                    maxSize /
+                    width
+                  );
+
+                width =
+                  maxSize;
+
+              }else{
+
+                width =
+                  Math.round(
+                    width *
+                    maxSize /
+                    height
+                  );
+
+                height =
+                  maxSize;
+
+              }
+
+            }
+
+
+            // =========================
+            // CANVAS
+            // =========================
+
+            const canvas =
+              document.createElement(
+                "canvas"
+              );
+
+
+            canvas.width =
+              width;
+
+            canvas.height =
+              height;
+
+
+            const ctx =
+              canvas.getContext(
+                "2d"
+              );
+
+
+            ctx.drawImage(
+              img,
+              0,
+              0,
+              width,
+              height
+            );
+
+
+            // =========================
+            // COMPRESS AS JPEG
+            // =========================
+
+            const compressed =
+              canvas.toDataURL(
+                "image/jpeg",
+                0.82
+              );
+
+
+            imageBase64 =
+              compressed.split(",")[1];
+
+
+            imageMime =
+              "image/jpeg";
+
+
+            // =========================
+            // PREVIEW
+            // =========================
+
+            const preview =
+              document.getElementById(
+                "preview"
+              );
+
+
+            if(preview){
+
+              preview.src =
+                compressed;
+
+              preview.style.display =
+                "block";
+
+            }
+
+
+            showToast(
+              "Image ready ✓"
+            );
+
+          };
+
+
+        img.onerror =
+          function(){
+
+            imageBase64 = "";
+
+            imageMime = "";
+
+            showToast(
+              "Photo read nahi ho paayi. JPG ya PNG try karo."
+            );
+
+          };
+
+
+        img.src =
+          e.target.result;
+
+      };
+
+
+    reader.onerror =
+      function(){
+
+        imageBase64 = "";
+
+        imageMime = "";
+
+        showToast(
+          "Photo read nahi ho paayi."
+        );
+
+      };
+
+
+    reader.readAsDataURL(
+      uploadFile
+    );
+
+
+  }catch(error){
+
+    console.error(
+      "Image upload error:",
+      error
+    );
+
+
+    imageBase64 = "";
+
+    imageMime = "";
+
+
+    showToast(
+      "HEIC photo convert nahi ho paayi. JPG/PNG try karo."
+    );
+
+
+    event.target.value =
+      "";
+
+  }
 
 }
 
@@ -1293,7 +596,6 @@ function cleanAIAnswer(text){
 
 async function solveQuestion(){
 
-
   const question =
     document
       .getElementById("question")
@@ -1432,15 +734,19 @@ ${question || "Please solve the question shown in the uploaded image."}
 
   try{
 
-
     const parts = [
 
       {
-        text: instruction
+        text:
+          instruction
       }
 
     ];
 
+
+    // =========================
+    // ADD IMAGE
+    // =========================
 
     if(imageBase64){
 
@@ -1462,19 +768,22 @@ ${question || "Please solve the question shown in the uploaded image."}
 
 
     // =========================
-    // IMPORTANT:
-    // SAME VERCEL PROJECT API
+    // VERCEL API
     // =========================
 
     const response =
       await fetch(
         "/api/gemini",
         {
-          method:"POST",
+
+          method:
+            "POST",
 
           headers:{
+
             "Content-Type":
               "application/json"
+
           },
 
           body:
@@ -1484,7 +793,8 @@ ${question || "Please solve the question shown in the uploaded image."}
 
                 {
 
-                  role:"user",
+                  role:
+                    "user",
 
                   parts:
                     parts
@@ -1554,7 +864,8 @@ ${question || "Please solve the question shown in the uploaded image."}
     }
 
 
-    let result = "";
+    let result =
+      "";
 
 
     if(
@@ -1609,7 +920,6 @@ ${question || "Please solve the question shown in the uploaded image."}
 
   }catch(error){
 
-
     console.error(
       "Question AI Error:",
       error
@@ -1626,7 +936,6 @@ ${question || "Please solve the question shown in the uploaded image."}
 
     answerCard.style.display =
       "block";
-
 
   }
 
@@ -1748,7 +1057,4 @@ function speakAnswer(){
 
 }
 
-</script>
-
-</body>
-</html>
+  </script>
