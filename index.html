@@ -1,53 +1,828 @@
-<script>
+<!DOCTYPE html>
+<html lang="en">
 
-let imageMime = "";
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<meta name="description"
+content="Question AI - Ask questions, upload images and get educational step-by-step answers.">
+
+<meta name="robots"
+content="index, follow">
+
+<title>Question AI - Educational AI Assistant</title>
+
+
+<style>
+
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+  font-family:Arial,sans-serif;
+}
+
+html{
+  scroll-behavior:smooth;
+}
+
+body{
+  background:#f4f7fb;
+  color:#172033;
+}
+
+.app{
+  max-width:720px;
+  margin:auto;
+  min-height:100vh;
+  background:white;
+}
+
+.header{
+  background:linear-gradient(
+    135deg,
+    #7440ff,
+    #6335ff,
+    #4b20d9
+  );
+  color:white;
+  padding:25px 18px;
+  text-align:center;
+}
+
+.header h1{
+  font-size:28px;
+  margin-bottom:7px;
+}
+
+.header p{
+  font-size:13px;
+  opacity:.9;
+}
+
+.section{
+  padding:15px;
+}
+
+.card{
+  background:white;
+  border:1px solid #e5e9f2;
+  border-radius:16px;
+  padding:15px;
+  margin-bottom:14px;
+  box-shadow:0 5px 18px rgba(30,40,80,.06);
+}
+
+label{
+  display:block;
+  font-size:14px;
+  font-weight:bold;
+  margin-bottom:9px;
+}
+
+.subjects{
+  display:flex;
+  gap:7px;
+  overflow-x:auto;
+  padding-bottom:4px;
+}
+
+.subjects button{
+  flex-shrink:0;
+  border:1px solid #ddd;
+  background:white;
+  color:#333;
+  border-radius:20px;
+  padding:9px 14px;
+  font-size:13px;
+}
+
+.subjects button.active{
+  background:#6735ff;
+  color:white;
+  border-color:#6735ff;
+}
+
+textarea{
+  width:100%;
+  min-height:170px;
+  resize:vertical;
+  border:1px solid #ddd;
+  border-radius:15px;
+  padding:16px;
+  font-size:18px;
+  outline:none;
+}
+
+textarea:focus,
+select:focus{
+  border-color:#6735ff;
+}
+
+.upload{
+  margin-top:15px;
+  border:2px dashed #d6dbe6;
+  border-radius:16px;
+  padding:22px 15px;
+  text-align:center;
+}
+
+.upload h3{
+  margin-bottom:10px;
+}
+
+.upload p{
+  color:#777;
+  margin-bottom:15px;
+}
+
+input[type="file"]{
+  width:100%;
+  font-size:16px;
+}
+
+#preview{
+  display:none;
+  width:100%;
+  max-height:350px;
+  object-fit:contain;
+  margin-top:15px;
+  border-radius:12px;
+  border:1px solid #ddd;
+}
+
+select{
+  width:100%;
+  padding:15px;
+  border:1px solid #ddd;
+  border-radius:14px;
+  font-size:16px;
+  background:white;
+  margin-bottom:14px;
+  outline:none;
+}
+
+.solve-btn{
+  width:100%;
+  border:0;
+  border-radius:15px;
+  padding:17px;
+  background:linear-gradient(
+    135deg,
+    #7038ff,
+    #6330f0
+  );
+  color:white;
+  font-size:18px;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+.solve-btn:disabled{
+  opacity:.6;
+}
+
+.status{
+  display:none;
+  text-align:center;
+  padding:15px;
+  color:#6735ff;
+  font-weight:bold;
+}
+
+.spinner{
+  display:inline-block;
+  width:18px;
+  height:18px;
+  border:3px solid #ddd;
+  border-top-color:#6735ff;
+  border-radius:50%;
+  animation:spin 1s linear infinite;
+  vertical-align:middle;
+  margin-right:8px;
+}
+
+@keyframes spin{
+  to{
+    transform:rotate(360deg);
+  }
+}
+
+.answer-card{
+  display:none;
+}
+
+.answer{
+  white-space:pre-wrap;
+  line-height:1.7;
+  font-size:16px;
+  word-break:break-word;
+}
+
+.answer-buttons{
+  display:flex;
+  gap:10px;
+  margin-top:15px;
+}
+
+.answer-buttons button{
+  flex:1;
+  padding:12px;
+  border-radius:12px;
+  border:1px solid #ddd;
+  background:white;
+  font-weight:bold;
+}
+
+.toast{
+  display:none;
+  position:fixed;
+  left:50%;
+  bottom:25px;
+  transform:translateX(-50%);
+  background:#202124;
+  color:white;
+  padding:12px 18px;
+  border-radius:25px;
+  z-index:9999;
+  max-width:90%;
+  text-align:center;
+}
+
+.info-page{
+  display:none;
+}
+
+.info-page h2{
+  margin-bottom:15px;
+}
+
+.info-page p{
+  line-height:1.7;
+  color:#444;
+  margin-bottom:15px;
+}
+
+.back-btn{
+  border:0;
+  background:#6735ff;
+  color:white;
+  padding:11px 18px;
+  border-radius:10px;
+  font-weight:bold;
+  margin-bottom:15px;
+}
+
+.footer{
+  padding:25px 15px;
+  text-align:center;
+  color:#777;
+  font-size:13px;
+}
+
+.footer button{
+  border:0;
+  background:none;
+  color:#6735ff;
+  margin:5px;
+  font-size:13px;
+}
+
+hr{
+  border:0;
+  border-top:1px solid #eee;
+  margin:15px 0;
+}
+
+@media(max-width:500px){
+
+  .header h1{
+    font-size:24px;
+  }
+
+  textarea{
+    font-size:17px;
+  }
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<div class="app">
+
+
+<!-- =========================
+     HEADER
+========================= -->
+
+<div class="header">
+
+<h1>Question AI</h1>
+
+<p>
+Ask questions, upload images and get step-by-step answers
+</p>
+
+</div>
+
+
+<!-- =========================
+     MAIN PAGE
+========================= -->
+
+<div id="mainPage">
+
+
+<div class="section">
+
+
+<!-- SUBJECT -->
+
+<div class="card">
+
+<label>Subject</label>
+
+<div class="subjects">
+
+<button
+class="active"
+onclick="selectSubject(this,'Auto')">
+Auto
+</button>
+
+<button
+onclick="selectSubject(this,'Maths')">
+Maths
+</button>
+
+<button
+onclick="selectSubject(this,'Physics')">
+Physics
+</button>
+
+<button
+onclick="selectSubject(this,'Chemistry')">
+Chemistry
+</button>
+
+<button
+onclick="selectSubject(this,'Biology')">
+Biology
+</button>
+
+<button
+onclick="selectSubject(this,'Hindi')">
+Hindi
+</button>
+
+<button
+onclick="selectSubject(this,'English')">
+English
+</button>
+
+</div>
+
+</div>
+
+
+<!-- QUESTION -->
+
+<div class="card">
+
+<label>Apna Question</label>
+
+<textarea
+id="question"
+placeholder="Example: 253 + 5 = ?"></textarea>
+
+
+<!-- IMAGE -->
+
+<div class="upload">
+
+<h3>
+Question ki image upload karo
+</h3>
+
+<p>
+Maths, Physics, Chemistry, Biology etc.
+</p>
+
+<input
+type="file"
+id="imageInput"
+accept="image/*,.heic,.heif"
+onchange="handleImage(event)">
+
+
+<img
+id="preview"
+alt="Uploaded question preview">
+
+</div>
+
+</div>
+
+
+<!-- LANGUAGE + LEVEL -->
+
+<div class="card">
+
+<label>Language</label>
+
+<select id="language">
+
+<option value="Hindi">
+Hindi
+</option>
+
+<option value="English">
+English
+</option>
+
+<option value="Hinglish">
+Hinglish
+</option>
+
+</select>
+
+
+<label>Level</label>
+
+<select id="level">
+
+<option value="School">
+School
+</option>
+
+<option value="Class 6-8">
+Class 6-8
+</option>
+
+<option value="Class 9-10">
+Class 9-10
+</option>
+
+<option value="Class 11-12">
+Class 11-12
+</option>
+
+<option value="College">
+College
+</option>
+
+</select>
+
+
+<button
+id="solveBtn"
+class="solve-btn"
+onclick="solveQuestion()">
+
+Solve Question
+
+</button>
+
+</div>
+
+
+<!-- STATUS -->
+
+<div
+id="status"
+class="status">
+
+<span class="spinner"></span>
+
+AI question solve kar raha hai...
+
+</div>
+
+
+<!-- ANSWER -->
+
+<div
+id="answerCard"
+class="card answer-card">
+
+<label>Answer</label>
+
+<div
+id="answer"
+class="answer">
+</div>
+
+
+<div class="answer-buttons">
+
+<button onclick="copyAnswer()">
+Copy
+</button>
+
+<button onclick="speakAnswer()">
+Speak
+</button>
+
+</div>
+
+</div>
+
+
+</div>
+
+</div>
+
+
+<!-- =========================
+     ABOUT
+========================= -->
+
+<div
+id="aboutPage"
+class="info-page">
+
+<div class="section">
+
+<button
+class="back-btn"
+onclick="showMain()">
+← Back
+</button>
+
+<div class="card">
+
+<h2>About Question AI</h2>
+
+<p>
+Question AI is an educational AI assistant
+designed to help students understand questions
+with simple and step-by-step explanations.
+</p>
+
+<p>
+You can type a question or upload a question
+image and ask the AI to solve it.
+</p>
+
+</div>
+
+</div>
+
+</div>
+
+
+<!-- =========================
+     CONTACT
+========================= -->
+
+<div
+id="contactPage"
+class="info-page">
+
+<div class="section">
+
+<button
+class="back-btn"
+onclick="showMain()">
+← Back
+</button>
+
+<div class="card">
+
+<h2>Contact</h2>
+
+<p>
+For questions, feedback or technical issues,
+please use the contact information provided
+by the website owner.
+</p>
+
+<p>
+We appreciate your feedback and suggestions.
+</p>
+
+</div>
+
+</div>
+
+</div>
+
+
+<!-- =========================
+     PRIVACY
+========================= -->
+
+<div
+id="privacyPage"
+class="info-page">
+
+<div class="section">
+
+<button
+class="back-btn"
+onclick="showMain()">
+← Back
+</button>
+
+<div class="card">
+
+<h2>Privacy Policy</h2>
+
+<p>
+Question AI is an educational application.
+Questions and uploaded images may be processed
+by the AI service to generate answers.
+</p>
+
+<p>
+Do not upload sensitive personal information,
+passwords, financial information or other
+private documents.
+</p>
+
+<p>
+The application does not ask users to enter
+their personal AI API key.
+The AI service is configured on the server.
+</p>
+
+</div>
+
+</div>
+
+</div>
+
+
+<!-- =========================
+     TERMS
+========================= -->
+
+<div
+id="termsPage"
+class="info-page">
+
+<div class="section">
+
+<button
+class="back-btn"
+onclick="showMain()">
+← Back
+</button>
+
+<div class="card">
+
+<h2>Terms & Conditions</h2>
+
+<p>
+Question AI is provided as an educational
+assistance tool.
+</p>
+
+<p>
+AI answers may occasionally contain mistakes.
+Students should verify important information
+with their teachers, textbooks or other trusted
+educational sources.
+</p>
+
+<p>
+Do not use the service for harmful, illegal or
+fraudulent activities.
+</p>
+
+</div>
+
+</div>
+
+</div>
+
+
+<!-- =========================
+     FOOTER
+========================= -->
+
+<div class="footer">
+
+<hr>
+
+<button onclick="showPage('aboutPage')">
+About
+</button>
+
+<button onclick="showPage('contactPage')">
+Contact
+</button>
+
+<button onclick="showPage('privacyPage')">
+Privacy Policy
+</button>
+
+<button onclick="showPage('termsPage')">
+Terms & Conditions
+</button>
+
+<p>
+© 2026 Question AI
+</p>
+
+</div>
+
+
+</div>
+
+
+<!-- TOAST -->
+
+<div
+id="toast"
+class="toast">
+</div>
+
+
+<script>
 
 
 // =========================
-// HEIC CONVERTER LOADER
+// GLOBAL VARIABLES
+// =========================
+
+let selectedSubject =
+"Auto";
+
+let imageBase64 =
+"";
+
+let imageMime =
+"";
+
+
+// =========================
+// HEIC CONVERTER
 // =========================
 
 function loadHEICConverter(){
 
-  return new Promise(function(resolve,reject){
+  return new Promise(
+    function(resolve,reject){
 
-    if(typeof heic2any !== "undefined"){
-
-      resolve();
-
-      return;
-
-    }
-
-    const script =
-      document.createElement("script");
-
-    script.src =
-      "https://cdn.jsdelivr.net/npm/heic2any@0.0.4/dist/heic2any.min.js";
-
-    script.onload =
-      function(){
+      if(
+        typeof heic2any !==
+        "undefined"
+      ){
 
         resolve();
 
-      };
+        return;
 
-    script.onerror =
-      function(){
+      }
 
-        reject(
-          new Error(
-            "HEIC converter load nahi hua."
-          )
+
+      const script =
+        document.createElement(
+          "script"
         );
 
-      };
 
-    document.head.appendChild(
-      script
-    );
+      script.src =
+        "https://cdn.jsdelivr.net/npm/heic2any@0.0.4/dist/heic2any.min.js";
 
-  });
+
+      script.onload =
+        function(){
+
+          resolve();
+
+        };
+
+
+      script.onerror =
+        function(){
+
+          reject(
+            new Error(
+              "HEIC converter load nahi hua."
+            )
+          );
+
+        };
+
+
+      document.head.appendChild(
+        script
+      );
+
+    }
+  );
 
 }
 
@@ -58,36 +833,78 @@ function loadHEICConverter(){
 
 function showPage(pageId){
 
-  document.getElementById("mainPage").style.display = "none";
+  document.getElementById(
+    "mainPage"
+  ).style.display =
+    "none";
 
-  document.getElementById("aboutPage").style.display = "none";
+  document.getElementById(
+    "aboutPage"
+  ).style.display =
+    "none";
 
-  document.getElementById("contactPage").style.display = "none";
+  document.getElementById(
+    "contactPage"
+  ).style.display =
+    "none";
 
-  document.getElementById("privacyPage").style.display = "none";
+  document.getElementById(
+    "privacyPage"
+  ).style.display =
+    "none";
 
-  document.getElementById("termsPage").style.display = "none";
+  document.getElementById(
+    "termsPage"
+  ).style.display =
+    "none";
 
-  document.getElementById(pageId).style.display = "block";
 
-  window.scrollTo(0,0);
+  document.getElementById(
+    pageId
+  ).style.display =
+    "block";
+
+
+  window.scrollTo(
+    0,
+    0
+  );
 
 }
 
 
 function showMain(){
 
-  document.getElementById("mainPage").style.display = "block";
+  document.getElementById(
+    "mainPage"
+  ).style.display =
+    "block";
 
-  document.getElementById("aboutPage").style.display = "none";
+  document.getElementById(
+    "aboutPage"
+  ).style.display =
+    "none";
 
-  document.getElementById("contactPage").style.display = "none";
+  document.getElementById(
+    "contactPage"
+  ).style.display =
+    "none";
 
-  document.getElementById("privacyPage").style.display = "none";
+  document.getElementById(
+    "privacyPage"
+  ).style.display =
+    "none";
 
-  document.getElementById("termsPage").style.display = "none";
+  document.getElementById(
+    "termsPage"
+  ).style.display =
+    "none";
 
-  window.scrollTo(0,0);
+
+  window.scrollTo(
+    0,
+    0
+  );
 
 }
 
@@ -99,27 +916,28 @@ function showMain(){
 function showToast(message){
 
   const toast =
-    document.getElementById("toast");
+    document.getElementById(
+      "toast"
+    );
 
-  if(!toast){
-
-    return;
-
-  }
 
   toast.innerText =
     message;
+
 
   toast.style.display =
     "block";
 
 
-  setTimeout(function(){
+  setTimeout(
+    function(){
 
-    toast.style.display =
-      "none";
+      toast.style.display =
+        "none";
 
-  },3000);
+    },
+    3000
+  );
 
 }
 
@@ -128,21 +946,28 @@ function showToast(message){
 // SUBJECT
 // =========================
 
-function selectSubject(button,subject){
+function selectSubject(
+  button,
+  subject
+){
 
   selectedSubject =
     subject;
 
 
   document
-    .querySelectorAll(".subjects button")
-    .forEach(function(btn){
+    .querySelectorAll(
+      ".subjects button"
+    )
+    .forEach(
+      function(btn){
 
-      btn.classList.remove(
-        "active"
-      );
+        btn.classList.remove(
+          "active"
+        );
 
-    });
+      }
+    );
 
 
   button.classList.add(
@@ -154,7 +979,7 @@ function selectSubject(button,subject){
 
 // =========================
 // IMAGE UPLOAD
-// HEIC / HEIF SUPPORT
+// HEIC + HEIF + JPG + PNG
 // =========================
 
 async function handleImage(event){
@@ -165,9 +990,11 @@ async function handleImage(event){
 
   if(!file){
 
-    imageBase64 = "";
+    imageBase64 =
+      "";
 
-    imageMime = "";
+    imageMime =
+      "";
 
     return;
 
@@ -185,10 +1012,16 @@ async function handleImage(event){
 
 
     const isHEIC =
-      fileName.endsWith(".heic") ||
-      fileName.endsWith(".heif") ||
-      file.type === "image/heic" ||
-      file.type === "image/heif";
+      fileName.endsWith(
+        ".heic"
+      ) ||
+      fileName.endsWith(
+        ".heif"
+      ) ||
+      file.type ===
+        "image/heic" ||
+      file.type ===
+        "image/heif";
 
 
     // =========================
@@ -221,20 +1054,24 @@ async function handleImage(event){
 
 
       uploadFile =
-        Array.isArray(converted)
-          ? converted[0]
-          : converted;
+        Array.isArray(
+          converted
+        )
+        ? converted[0]
+        : converted;
 
     }
 
 
     // =========================
-    // NORMAL IMAGE CHECK
+    // IMAGE CHECK
     // =========================
 
     if(
       !isHEIC &&
-      !file.type.startsWith("image/")
+      !file.type.startsWith(
+        "image/"
+      )
     ){
 
       showToast(
@@ -250,7 +1087,7 @@ async function handleImage(event){
 
 
     // =========================
-    // FILE READER
+    // READ FILE
     // =========================
 
     const reader =
@@ -279,7 +1116,7 @@ async function handleImage(event){
 
 
             // =========================
-            // RESIZE IMAGE
+            // RESIZE
             // =========================
 
             if(
@@ -287,7 +1124,9 @@ async function handleImage(event){
               height > maxSize
             ){
 
-              if(width > height){
+              if(
+                width > height
+              ){
 
                 height =
                   Math.round(
@@ -349,7 +1188,7 @@ async function handleImage(event){
 
 
             // =========================
-            // COMPRESS AS JPEG
+            // JPEG
             // =========================
 
             const compressed =
@@ -360,7 +1199,9 @@ async function handleImage(event){
 
 
             imageBase64 =
-              compressed.split(",")[1];
+              compressed.split(
+                ","
+              )[1];
 
 
             imageMime =
@@ -377,15 +1218,12 @@ async function handleImage(event){
               );
 
 
-            if(preview){
+            preview.src =
+              compressed;
 
-              preview.src =
-                compressed;
 
-              preview.style.display =
-                "block";
-
-            }
+            preview.style.display =
+              "block";
 
 
             showToast(
@@ -398,12 +1236,15 @@ async function handleImage(event){
         img.onerror =
           function(){
 
-            imageBase64 = "";
+            imageBase64 =
+              "";
 
-            imageMime = "";
+            imageMime =
+              "";
+
 
             showToast(
-              "Photo read nahi ho paayi. JPG ya PNG try karo."
+              "Photo read nahi ho paayi. JPG/PNG try karo."
             );
 
           };
@@ -418,9 +1259,12 @@ async function handleImage(event){
     reader.onerror =
       function(){
 
-        imageBase64 = "";
+        imageBase64 =
+          "";
 
-        imageMime = "";
+        imageMime =
+          "";
+
 
         showToast(
           "Photo read nahi ho paayi."
@@ -442,9 +1286,11 @@ async function handleImage(event){
     );
 
 
-    imageBase64 = "";
+    imageBase64 =
+      "";
 
-    imageMime = "";
+    imageMime =
+      "";
 
 
     showToast(
@@ -598,20 +1444,26 @@ async function solveQuestion(){
 
   const question =
     document
-      .getElementById("question")
+      .getElementById(
+        "question"
+      )
       .value
       .trim();
 
 
   const language =
     document
-      .getElementById("language")
+      .getElementById(
+        "language"
+      )
       .value;
 
 
   const level =
     document
-      .getElementById("level")
+      .getElementById(
+        "level"
+      )
       .value;
 
 
@@ -768,7 +1620,7 @@ ${question || "Please solve the question shown in the uploaded image."}
 
 
     // =========================
-    // VERCEL API
+    // SAME VERCEL PROJECT API
     // =========================
 
     const response =
@@ -780,10 +1632,8 @@ ${question || "Please solve the question shown in the uploaded image."}
             "POST",
 
           headers:{
-
             "Content-Type":
               "application/json"
-
           },
 
           body:
@@ -978,20 +1828,24 @@ function copyAnswer(){
 
     navigator.clipboard
       .writeText(text)
-      .then(function(){
+      .then(
+        function(){
 
-        showToast(
-          "Answer copy ho gaya ✓"
-        );
+          showToast(
+            "Answer copy ho gaya ✓"
+          );
 
-      })
-      .catch(function(){
+        }
+      )
+      .catch(
+        function(){
 
-        showToast(
-          "Copy nahi ho paya"
-        );
+          showToast(
+            "Copy nahi ho paya"
+          );
 
-      });
+        }
+      );
 
   }else{
 
@@ -1005,7 +1859,7 @@ function copyAnswer(){
 
 
 // =========================
-// SPEAK
+// SPEAK ANSWER
 // =========================
 
 function speakAnswer(){
@@ -1026,7 +1880,10 @@ function speakAnswer(){
 
 
   if(
-    !("speechSynthesis" in window)
+    !(
+      "speechSynthesis"
+      in window
+    )
   ){
 
     showToast(
@@ -1051,10 +1908,34 @@ function speakAnswer(){
     0.9;
 
 
+  const language =
+    document
+      .getElementById(
+        "language"
+      )
+      .value;
+
+
+  if(language === "Hindi"){
+
+    speech.lang =
+      "hi-IN";
+
+  }else{
+
+    speech.lang =
+      "en-IN";
+
+  }
+
+
   window.speechSynthesis.speak(
     speech
   );
 
 }
 
-  </script>
+</script>
+
+</body>
+  </html>
