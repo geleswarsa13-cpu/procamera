@@ -3,12 +3,16 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="Question AI - Ask questions, upload images and get educational step-by-step answers.">
+
+<meta name="description"
+content="Question AI - Ask questions, upload images and get educational step-by-step answers.">
+
 <meta name="robots" content="index, follow">
 
 <title>Question AI - Educational AI Assistant</title>
 
 <style>
+
 *{
   box-sizing:border-box;
   margin:0;
@@ -69,7 +73,9 @@ label{
   margin-bottom:9px;
 }
 
-input,textarea,select{
+input,
+textarea,
+select{
   width:100%;
   border:1px solid #d9deea;
   border-radius:12px;
@@ -305,10 +311,13 @@ button{
 }
 
 @media(max-width:500px){
+
   .row{
     flex-direction:column;
   }
+
 }
+
 </style>
 </head>
 
@@ -316,393 +325,590 @@ button{
 
 <div class="app">
 
-  <!-- MAIN APP -->
-  <div id="mainPage">
+<!-- ================= MAIN PAGE ================= -->
 
-    <div class="header">
-      <h1>Question AI</h1>
-      <p>Ask questions • Upload image • Get step-by-step answers</p>
-    </div>
+<div id="mainPage">
 
-    <div class="section">
+  <div class="header">
 
-      <!-- API KEY -->
-      <div class="card">
-        <label>Gemini API Key</label>
+    <h1>Question AI</h1>
 
-        <input
-          id="apiKey"
-          type="password"
-          placeholder="Apni Gemini API key yahan paste karo"
-        >
+    <p>
+      Ask questions • Upload image • Get step-by-step answers
+    </p>
 
-        <button class="main-btn" onclick="saveKey()">
-          Save API Key
-        </button>
+  </div>
 
-        <div class="small">
-          API key sirf is browser session me save hogi.
-        </div>
-      </div>
 
-      <!-- SUBJECT -->
-      <div class="card">
-        <label>Subject</label>
+  <div class="section">
 
-        <div class="subjects">
 
-          <button class="active" onclick="selectSubject(this,'Auto')">
-            Auto
-          </button>
+    <!-- ================= SUBJECT ================= -->
 
-          <button onclick="selectSubject(this,'Maths')">
-            Maths
-          </button>
+    <div class="card">
 
-          <button onclick="selectSubject(this,'Physics')">
-            Physics
-          </button>
+      <label>Subject</label>
 
-          <button onclick="selectSubject(this,'Chemistry')">
-            Chemistry
-          </button>
-
-          <button onclick="selectSubject(this,'Biology')">
-            Biology
-          </button>
-
-          <button onclick="selectSubject(this,'Hindi')">
-            Hindi
-          </button>
-
-          <button onclick="selectSubject(this,'English')">
-            English
-          </button>
-
-        </div>
-      </div>
-
-      <!-- QUESTION -->
-      <div class="card">
-
-        <label>Apna Question</label>
-
-        <textarea
-          id="question"
-          placeholder="Example: 253 + 5 = ?"
-        ></textarea>
-
-        <div class="file-box">
-
-          <b>Question ki image upload karo</b>
-
-          <p class="small">
-            Maths, Physics, Chemistry, Biology etc.
-          </p>
-
-          <input
-            id="imageInput"
-            type="file"
-            accept="image/*"
-            onchange="handleImage(event)"
-          >
-
-          <img id="preview" class="preview">
-
-        </div>
-
-      </div>
-
-      <!-- SETTINGS -->
-      <div class="card">
-
-        <div class="row">
-
-          <div>
-            <label>Language</label>
-
-            <select id="language">
-              <option>Hindi</option>
-              <option>English</option>
-              <option>Hinglish</option>
-            </select>
-          </div>
-
-          <div>
-            <label>Level</label>
-
-            <select id="level">
-              <option>School</option>
-              <option>Class 6-8</option>
-              <option>Class 9-10</option>
-              <option>Class 11-12</option>
-              <option>College</option>
-            </select>
-          </div>
-
-        </div>
+      <div class="subjects">
 
         <button
-          id="solveBtn"
-          class="main-btn"
-          onclick="solveQuestion()"
-        >
-          Solve Question
+          class="active"
+          onclick="selectSubject(this,'Auto')">
+          Auto
+        </button>
+
+        <button
+          onclick="selectSubject(this,'Maths')">
+          Maths
+        </button>
+
+        <button
+          onclick="selectSubject(this,'Physics')">
+          Physics
+        </button>
+
+        <button
+          onclick="selectSubject(this,'Chemistry')">
+          Chemistry
+        </button>
+
+        <button
+          onclick="selectSubject(this,'Biology')">
+          Biology
+        </button>
+
+        <button
+          onclick="selectSubject(this,'Hindi')">
+          Hindi
+        </button>
+
+        <button
+          onclick="selectSubject(this,'English')">
+          English
         </button>
 
       </div>
 
-      <!-- LOADING -->
-      <div id="status" class="status">
-        <span class="spinner"></span>
-        Question solve ho raha hai...
+    </div>
+
+
+    <!-- ================= QUESTION ================= -->
+
+    <div class="card">
+
+      <label>
+        Apna Question
+      </label>
+
+      <textarea
+        id="question"
+        placeholder="Example: 253 + 5 = ?"
+      ></textarea>
+
+
+      <div class="file-box">
+
+        <b>
+          Question ki image upload karo
+        </b>
+
+        <p class="small">
+          Maths, Physics, Chemistry, Biology etc.
+        </p>
+
+
+        <input
+          id="imageInput"
+          type="file"
+          accept="image/*"
+          onchange="handleImage(event)"
+        >
+
+
+        <img
+          id="preview"
+          class="preview"
+        >
+
       </div>
 
-      <!-- ANSWER -->
-      <div id="answerCard" class="card answer-card">
+    </div>
 
-        <label>Answer</label>
 
-        <div id="answer" class="answer"></div>
+    <!-- ================= SETTINGS ================= -->
 
-        <div class="answer-actions">
+    <div class="card">
 
-          <button
-            class="secondary-btn"
-            onclick="copyAnswer()"
-          >
-            📋 Copy
-          </button>
+      <div class="row">
 
-          <button
-            class="secondary-btn"
-            onclick="speakAnswer()"
-          >
-            🔊 Speak
-          </button>
+
+        <div>
+
+          <label>
+            Language
+          </label>
+
+          <select id="language">
+
+            <option>
+              Hindi
+            </option>
+
+            <option>
+              English
+            </option>
+
+            <option>
+              Hinglish
+            </option>
+
+          </select>
+
+        </div>
+
+
+        <div>
+
+          <label>
+            Level
+          </label>
+
+          <select id="level">
+
+            <option>
+              School
+            </option>
+
+            <option>
+              Class 6-8
+            </option>
+
+            <option>
+              Class 9-10
+            </option>
+
+            <option>
+              Class 11-12
+            </option>
+
+            <option>
+              College
+            </option>
+
+          </select>
 
         </div>
 
       </div>
 
-    </div>
 
-  </div>
+      <button
+        id="solveBtn"
+        class="main-btn"
+        onclick="solveQuestion()">
 
+        Solve Question
 
-  <!-- ABOUT -->
-  <div id="aboutPage" class="info-page">
-
-    <button class="back-btn" onclick="showMain()">
-      ← Back
-    </button>
-
-    <h2>About Question AI</h2>
-
-    <p>
-      Question AI is an educational assistant designed to help
-      students understand questions in a simple and easy way.
-    </p>
-
-    <p>
-      Users can type a question or upload an image of a question
-      and receive an AI-generated explanation.
-    </p>
-
-    <h3>Subjects</h3>
-
-    <p>
-      Maths, Physics, Chemistry, Biology, Hindi, English and
-      other educational questions are supported.
-    </p>
-
-    <h3>Our Goal</h3>
-
-    <p>
-      Our goal is to make learning easier and provide clear,
-      step-by-step educational explanations.
-    </p>
-
-  </div>
-
-
-  <!-- CONTACT -->
-  <div id="contactPage" class="info-page">
-
-    <button class="back-btn" onclick="showMain()">
-      ← Back
-    </button>
-
-    <h2>Contact Us</h2>
-
-    <p>
-      If you have questions, suggestions, feedback or notice a
-      problem with Question AI, you can contact us.
-    </p>
-
-    <div class="contact-box">
-
-      <p>
-        <b>Email:</b>
-      </p>
-
-      <p>
-        Add your contact email here.
-      </p>
-
-    </div>
-
-    <p class="small">
-      Replace the email text above with your real support email
-      before publishing the final version.
-    </p>
-
-  </div>
-
-
-  <!-- PRIVACY -->
-  <div id="privacyPage" class="info-page">
-
-    <button class="back-btn" onclick="showMain()">
-      ← Back
-    </button>
-
-    <h2>Privacy Policy</h2>
-
-    <p>
-      Your privacy is important to us. This Privacy Policy
-      explains how Question AI handles information when you use
-      the website.
-    </p>
-
-    <h3>Questions and Images</h3>
-
-    <p>
-      Questions and images submitted through the website may be
-      sent to the AI service in order to generate an answer.
-    </p>
-
-    <h3>API Key</h3>
-
-    <p>
-      In the current version, users can enter their own Gemini
-      API key. The key is stored only in the browser session and
-      is used to make AI requests.
-    </p>
-
-    <h3>Cookies</h3>
-
-    <p>
-      This website may use browser storage required for basic
-      functionality. Advertising services, if added in the
-      future, may use cookies or similar technologies according
-      to their own policies.
-    </p>
-
-    <h3>Third-Party Services</h3>
-
-    <p>
-      Question AI uses third-party AI services to process
-      questions and generate answers. Their own terms and
-      privacy policies may also apply.
-    </p>
-
-    <h3>Updates</h3>
-
-    <p>
-      This Privacy Policy may be updated when the website or its
-      services change.
-    </p>
-
-  </div>
-
-
-  <!-- TERMS -->
-  <div id="termsPage" class="info-page">
-
-    <button class="back-btn" onclick="showMain()">
-      ← Back
-    </button>
-
-    <h2>Terms & Conditions</h2>
-
-    <p>
-      By using Question AI, you agree to use the service
-      responsibly and for lawful educational purposes.
-    </p>
-
-    <h3>AI Answers</h3>
-
-    <p>
-      AI-generated answers may contain mistakes. Users should
-      verify important information with teachers, textbooks or
-      reliable educational sources.
-    </p>
-
-    <h3>Acceptable Use</h3>
-
-    <p>
-      Do not use the website for unlawful activity, abuse,
-      attempts to disrupt the service, or misuse of third-party
-      services.
-    </p>
-
-    <h3>Service Availability</h3>
-
-    <p>
-      We may change, suspend or improve parts of the website at
-      any time.
-    </p>
-
-    <h3>Educational Purpose</h3>
-
-    <p>
-      Question AI is intended as an educational assistance tool
-      and should not be treated as a replacement for a qualified
-      teacher or professional advice.
-    </p>
-
-  </div>
-
-
-  <!-- FOOTER -->
-  <div class="footer">
-
-    <div class="footer-links">
-
-      <button onclick="showPage('aboutPage')">
-        About
-      </button>
-
-      <button onclick="showPage('contactPage')">
-        Contact
-      </button>
-
-      <button onclick="showPage('privacyPage')">
-        Privacy Policy
-      </button>
-
-      <button onclick="showPage('termsPage')">
-        Terms & Conditions
       </button>
 
     </div>
 
-    Question AI • Educational Assistant
+
+    <!-- ================= LOADING ================= -->
+
+    <div
+      id="status"
+      class="status">
+
+      <span class="spinner"></span>
+
+      Question solve ho raha hai...
+
+    </div>
+
+
+    <!-- ================= ANSWER ================= -->
+
+    <div
+      id="answerCard"
+      class="card answer-card">
+
+      <label>
+        Answer
+      </label>
+
+
+      <div
+        id="answer"
+        class="answer">
+      </div>
+
+
+      <div class="answer-actions">
+
+
+        <button
+          class="secondary-btn"
+          onclick="copyAnswer()">
+
+          📋 Copy
+
+        </button>
+
+
+        <button
+          class="secondary-btn"
+          onclick="speakAnswer()">
+
+          🔊 Speak
+
+        </button>
+
+
+      </div>
+
+    </div>
+
 
   </div>
 
 </div>
 
 
-<div id="toast" class="toast"></div>
+<!-- ================= ABOUT ================= -->
+
+<div
+  id="aboutPage"
+  class="info-page">
+
+  <button
+    class="back-btn"
+    onclick="showMain()">
+
+    ← Back
+
+  </button>
+
+
+  <h2>
+    About Question AI
+  </h2>
+
+
+  <p>
+    Question AI is an educational assistant designed to help
+    students understand questions in a simple and easy way.
+  </p>
+
+
+  <p>
+    Users can type a question or upload an image of a question
+    and receive an AI-generated explanation.
+  </p>
+
+
+  <h3>
+    Subjects
+  </h3>
+
+
+  <p>
+    Maths, Physics, Chemistry, Biology, Hindi, English and
+    other educational questions are supported.
+  </p>
+
+
+  <h3>
+    Our Goal
+  </h3>
+
+
+  <p>
+    Our goal is to make learning easier and provide clear,
+    step-by-step educational explanations.
+  </p>
+
+</div>
+
+
+<!-- ================= CONTACT ================= -->
+
+<div
+  id="contactPage"
+  class="info-page">
+
+  <button
+    class="back-btn"
+    onclick="showMain()">
+
+    ← Back
+
+  </button>
+
+
+  <h2>
+    Contact Us
+  </h2>
+
+
+  <p>
+    If you have questions, suggestions, feedback or notice a
+    problem with Question AI, you can contact us.
+  </p>
+
+
+  <div class="contact-box">
+
+    <p>
+      <b>Email:</b>
+    </p>
+
+    <p>
+      Add your contact email here.
+    </p>
+
+  </div>
+
+
+  <p class="small">
+    Replace the email text above with your real support email
+    before publishing the final version.
+  </p>
+
+</div>
+
+
+<!-- ================= PRIVACY ================= -->
+
+<div
+  id="privacyPage"
+  class="info-page">
+
+  <button
+    class="back-btn"
+    onclick="showMain()">
+
+    ← Back
+
+  </button>
+
+
+  <h2>
+    Privacy Policy
+  </h2>
+
+
+  <p>
+    Your privacy is important to us. This Privacy Policy
+    explains how Question AI handles information when you use
+    the website.
+  </p>
+
+
+  <h3>
+    Questions and Images
+  </h3>
+
+
+  <p>
+    Questions and images submitted through the website may be
+    sent to the AI service in order to generate an answer.
+  </p>
+
+
+  <h3>
+    API Key
+  </h3>
+
+
+  <p>
+    Question AI uses a server-side API configuration.
+    Users do not need to enter an API key in the website.
+  </p>
+
+
+  <h3>
+    Cookies
+  </h3>
+
+
+  <p>
+    This website may use browser storage required for basic
+    functionality. Advertising services, if added in the
+    future, may use cookies or similar technologies according
+    to their own policies.
+  </p>
+
+
+  <h3>
+    Third-Party Services
+  </h3>
+
+
+  <p>
+    Question AI uses third-party AI services to process
+    questions and generate answers. Their own terms and
+    privacy policies may also apply.
+  </p>
+
+
+  <h3>
+    Updates
+  </h3>
+
+
+  <p>
+    This Privacy Policy may be updated when the website or its
+    services change.
+  </p>
+
+</div>
+
+
+<!-- ================= TERMS ================= -->
+
+<div
+  id="termsPage"
+  class="info-page">
+
+  <button
+    class="back-btn"
+    onclick="showMain()">
+
+    ← Back
+
+  </button>
+
+
+  <h2>
+    Terms & Conditions
+  </h2>
+
+
+  <p>
+    By using Question AI, you agree to use the service
+    responsibly and for lawful educational purposes.
+  </p>
+
+
+  <h3>
+    AI Answers
+  </h3>
+
+
+  <p>
+    AI-generated answers may contain mistakes. Users should
+    verify important information with teachers, textbooks or
+    reliable educational sources.
+  </p>
+
+
+  <h3>
+    Acceptable Use
+  </h3>
+
+
+  <p>
+    Do not use the website for unlawful activity, abuse,
+    attempts to disrupt the service, or misuse of third-party
+    services.
+  </p>
+
+
+  <h3>
+    Service Availability
+  </h3>
+
+
+  <p>
+    We may change, suspend or improve parts of the website at
+    any time.
+  </p>
+
+
+  <h3>
+    Educational Purpose
+  </h3>
+
+
+  <p>
+    Question AI is intended as an educational assistance tool
+    and should not be treated as a replacement for a qualified
+    teacher or professional advice.
+  </p>
+
+</div>
+
+
+<!-- ================= FOOTER ================= -->
+
+<div class="footer">
+
+
+  <div class="footer-links">
+
+
+    <button
+      onclick="showPage('aboutPage')">
+
+      About
+
+    </button>
+
+
+    <button
+      onclick="showPage('contactPage')">
+
+      Contact
+
+    </button>
+
+
+    <button
+      onclick="showPage('privacyPage')">
+
+      Privacy Policy
+
+    </button>
+
+
+    <button
+      onclick="showPage('termsPage')">
+
+      Terms & Conditions
+
+    </button>
+
+
+  </div>
+
+
+  Question AI • Educational Assistant
+
+
+</div>
+
+
+</div>
+
+
+<div
+  id="toast"
+  class="toast">
+</div>
 
 
 <script>
 
+
+// =========================
+// VARIABLES
+// =========================
+
 let selectedSubject = "Auto";
 
 let imageBase64 = "";
+
 let imageMime = "";
 
 
@@ -725,6 +931,7 @@ function showPage(pageId){
   document.getElementById(pageId).style.display = "block";
 
   window.scrollTo(0,0);
+
 }
 
 
@@ -741,20 +948,6 @@ function showMain(){
   document.getElementById("termsPage").style.display = "none";
 
   window.scrollTo(0,0);
-}
-
-
-// =========================
-// LOAD SAVED API KEY
-// =========================
-
-const savedKey =
-  sessionStorage.getItem("gemini_api_key");
-
-if(savedKey){
-
-  document.getElementById("apiKey").value =
-    savedKey;
 
 }
 
@@ -772,39 +965,12 @@ function showToast(message){
 
   toast.style.display = "block";
 
+
   setTimeout(function(){
 
     toast.style.display = "none";
 
   },3000);
-
-}
-
-
-// =========================
-// SAVE API KEY
-// =========================
-
-function saveKey(){
-
-  const key =
-    document.getElementById("apiKey")
-    .value
-    .trim();
-
-  if(!key){
-
-    showToast("API key paste karo");
-
-    return;
-  }
-
-  sessionStorage.setItem(
-    "gemini_api_key",
-    key
-  );
-
-  showToast("API key save ho gayi ✓");
 
 }
 
@@ -817,6 +983,7 @@ function selectSubject(button,subject){
 
   selectedSubject = subject;
 
+
   document
     .querySelectorAll(".subjects button")
     .forEach(function(btn){
@@ -824,6 +991,7 @@ function selectSubject(button,subject){
       btn.classList.remove("active");
 
     });
+
 
   button.classList.add("active");
 
@@ -839,37 +1007,55 @@ function handleImage(event){
   const file =
     event.target.files[0];
 
+
   if(!file){
 
     imageBase64 = "";
+
     imageMime = "";
 
     return;
+
   }
+
 
   if(!file.type.startsWith("image/")){
 
-    showToast("Sirf image upload karo");
+    showToast(
+      "Sirf image upload karo"
+    );
 
     return;
+
   }
+
 
   const reader =
     new FileReader();
+
 
   reader.onload = function(e){
 
     const img =
       new Image();
 
+
     img.onload = function(){
 
       const maxSize = 1600;
 
-      let width = img.width;
-      let height = img.height;
 
-      if(width > maxSize || height > maxSize){
+      let width =
+        img.width;
+
+      let height =
+        img.height;
+
+
+      if(
+        width > maxSize ||
+        height > maxSize
+      ){
 
         if(width > height){
 
@@ -878,7 +1064,8 @@ function handleImage(event){
               height * maxSize / width
             );
 
-          width = maxSize;
+          width =
+            maxSize;
 
         }else{
 
@@ -887,20 +1074,32 @@ function handleImage(event){
               width * maxSize / height
             );
 
-          height = maxSize;
+          height =
+            maxSize;
 
         }
 
       }
 
-      const canvas =
-        document.createElement("canvas");
 
-      canvas.width = width;
-      canvas.height = height;
+      const canvas =
+        document.createElement(
+          "canvas"
+        );
+
+
+      canvas.width =
+        width;
+
+      canvas.height =
+        height;
+
 
       const ctx =
-        canvas.getContext("2d");
+        canvas.getContext(
+          "2d"
+        );
+
 
       ctx.drawImage(
         img,
@@ -910,34 +1109,48 @@ function handleImage(event){
         height
       );
 
+
       const compressed =
         canvas.toDataURL(
           "image/jpeg",
           0.82
         );
 
+
       imageBase64 =
         compressed.split(",")[1];
+
 
       imageMime =
         "image/jpeg";
 
+
       const preview =
-        document.getElementById("preview");
+        document.getElementById(
+          "preview"
+        );
+
 
       preview.src =
         compressed;
 
+
       preview.style.display =
         "block";
 
-      showToast("Image ready ✓");
+
+      showToast(
+        "Image ready ✓"
+      );
 
     };
 
-    img.src = e.target.result;
+
+    img.src =
+      e.target.result;
 
   };
+
 
   reader.readAsDataURL(file);
 
@@ -950,53 +1163,124 @@ function handleImage(event){
 
 function cleanAIAnswer(text){
 
-  if(!text) return "";
+  if(!text){
+
+    return "";
+
+  }
+
 
   return text
 
-    .replace(/```[a-zA-Z]*\n?/g,"")
-    .replace(/```/g,"")
+    .replace(
+      /```[a-zA-Z]*\n?/g,
+      ""
+    )
 
-    .replace(/\$\$/g,"")
-    .replace(/\$/g,"")
+    .replace(
+      /```/g,
+      ""
+    )
 
-    .replace(/\*\*/g,"")
-    .replace(/\*/g,"")
+    .replace(
+      /\$\$/g,
+      ""
+    )
 
-    .replace(/^#{1,6}\s*/gm,"")
+    .replace(
+      /\$/g,
+      ""
+    )
 
-    .replace(/\\text\{([^}]*)\}/g,"$1")
+    .replace(
+      /\*\*/g,
+      ""
+    )
 
-    .replace(/\\mathrm\{([^}]*)\}/g,"$1")
+    .replace(
+      /\*/g,
+      ""
+    )
 
-    .replace(/\\mathbf\{([^}]*)\}/g,"$1")
+    .replace(
+      /^#{1,6}\s*/gm,
+      ""
+    )
+
+    .replace(
+      /\\text\{([^}]*)\}/g,
+      "$1"
+    )
+
+    .replace(
+      /\\mathrm\{([^}]*)\}/g,
+      "$1"
+    )
+
+    .replace(
+      /\\mathbf\{([^}]*)\}/g,
+      "$1"
+    )
 
     .replace(
       /\\frac\{([^}]*)\}\{([^}]*)\}/g,
       "$1/$2"
     )
 
-    .replace(/\\quad/g," ")
+    .replace(
+      /\\quad/g,
+      " "
+    )
 
-    .replace(/\\qquad/g," ")
+    .replace(
+      /\\qquad/g,
+      " "
+    )
 
-    .replace(/\\,/g," ")
+    .replace(
+      /\\,/g,
+      " "
+    )
 
-    .replace(/\\;/g," ")
+    .replace(
+      /\\;/g,
+      " "
+    )
 
-    .replace(/\\!/g,"")
+    .replace(
+      /\\!/g,
+      ""
+    )
 
-    .replace(/\\left/g,"")
+    .replace(
+      /\\left/g,
+      ""
+    )
 
-    .replace(/\\right/g,"")
+    .replace(
+      /\\right/g,
+      ""
+    )
 
-    .replace(/\\begin\{[^}]*\}/g,"")
+    .replace(
+      /\\begin\{[^}]*\}/g,
+      ""
+    )
 
-    .replace(/\\end\{[^}]*\}/g,"")
+    .replace(
+      /\\end\{[^}]*\}/g,
+      ""
+    )
 
-    .replace(/[ \t]+/g," ")
+    .replace(
+      /[ \t]+/g,
+      " "
+    )
 
-    .replace(/\n{3,}/g,"\n\n")
+    .replace(
+      /\n{3,}/g,
+      "\n\n"
+    )
 
     .trim();
 
@@ -1009,11 +1293,6 @@ function cleanAIAnswer(text){
 
 async function solveQuestion(){
 
-  const key =
-    document
-      .getElementById("apiKey")
-      .value
-      .trim();
 
   const question =
     document
@@ -1021,59 +1300,68 @@ async function solveQuestion(){
       .value
       .trim();
 
+
   const language =
     document
       .getElementById("language")
       .value;
+
 
   const level =
     document
       .getElementById("level")
       .value;
 
-  if(!key){
 
-    showToast(
-      "Pehle Gemini API key save karo"
-    );
-
-    return;
-  }
-
-  if(!question && !imageBase64){
+  if(
+    !question &&
+    !imageBase64
+  ){
 
     showToast(
       "Question ya image do"
     );
 
     return;
+
   }
 
-  sessionStorage.setItem(
-    "gemini_api_key",
-    key
-  );
 
   const status =
-    document.getElementById("status");
+    document.getElementById(
+      "status"
+    );
+
 
   const answerCard =
-    document.getElementById("answerCard");
+    document.getElementById(
+      "answerCard"
+    );
+
 
   const answer =
-    document.getElementById("answer");
+    document.getElementById(
+      "answer"
+    );
+
 
   const solveBtn =
-    document.getElementById("solveBtn");
+    document.getElementById(
+      "solveBtn"
+    );
+
 
   status.style.display =
     "block";
 
+
   answerCard.style.display =
     "none";
 
+
   solveBtn.disabled =
     true;
+
 
   const instruction = `
 
@@ -1141,73 +1429,136 @@ ${question || "Please solve the question shown in the uploaded image."}
 
 `;
 
+
   try{
 
+
     const parts = [
+
       {
         text: instruction
       }
+
     ];
+
 
     if(imageBase64){
 
       parts.push({
 
         inline_data:{
-          mime_type:imageMime,
-          data:imageBase64
+
+          mime_type:
+            imageMime,
+
+          data:
+            imageBase64
+
         }
 
       });
 
     }
 
-    const response = await fetch(
-  "https://question-ai-phi.vercel.app/api/gemini",
-  {
-    method: "POST",
 
-    headers: {
-      "Content-Type": "application/json"
-    },
+    // =========================
+    // IMPORTANT:
+    // SAME VERCEL PROJECT API
+    // =========================
 
-    body: JSON.stringify({
-      contents: [
+    const response =
+      await fetch(
+        "/api/gemini",
         {
-          role: "user",
-          parts: parts
-        }
-      ]
-    })
-  }
-);
+          method:"POST",
 
-    const data =
-      await response.json();
+          headers:{
+            "Content-Type":
+              "application/json"
+          },
+
+          body:
+            JSON.stringify({
+
+              contents:[
+
+                {
+
+                  role:"user",
+
+                  parts:
+                    parts
+
+                }
+
+              ]
+
+            })
+
+        }
+      );
+
+
+    let data;
+
+
+    try{
+
+      data =
+        await response.json();
+
+    }catch(e){
+
+      throw new Error(
+        "Server ne valid response nahi diya."
+      );
+
+    }
+
 
     if(!response.ok){
 
       let message =
         "Gemini API error";
 
+
       if(
         data &&
-        data.error &&
-        data.error.message
+        data.error
       ){
 
-        message =
-          data.error.message;
+        if(
+          typeof data.error ===
+          "string"
+        ){
+
+          message =
+            data.error;
+
+        }else if(
+          data.error.message
+        ){
+
+          message =
+            data.error.message;
+
+        }
 
       }
 
-      throw new Error(message);
+
+      throw new Error(
+        message
+      );
 
     }
 
+
     let result = "";
 
+
     if(
+      data &&
       data.candidates &&
       data.candidates[0] &&
       data.candidates[0].content &&
@@ -1217,18 +1568,21 @@ ${question || "Please solve the question shown in the uploaded image."}
       data.candidates[0]
         .content
         .parts
-        .forEach(function(part){
+        .forEach(
+          function(part){
 
-          if(part.text){
+            if(part.text){
 
-            result +=
-              part.text;
+              result +=
+                part.text;
+
+            }
 
           }
-
-        });
+        );
 
     }
+
 
     if(!result){
 
@@ -1238,27 +1592,48 @@ ${question || "Please solve the question shown in the uploaded image."}
 
     }
 
+
     const cleanResult =
-      cleanAIAnswer(result);
+      cleanAIAnswer(
+        result
+      );
+
 
     answer.innerText =
       cleanResult;
 
+
     answerCard.style.display =
       "block";
+
 
   }catch(error){
 
+
+    console.error(
+      "Question AI Error:",
+      error
+    );
+
+
     answer.innerText =
-      "Error: " + error.message;
+      "Error: " +
+      (
+        error.message ||
+        "Request failed"
+      );
+
 
     answerCard.style.display =
       "block";
 
+
   }
+
 
   status.style.display =
     "none";
+
 
   solveBtn.disabled =
     false;
@@ -1274,30 +1649,48 @@ function copyAnswer(){
 
   const text =
     document
-      .getElementById("answer")
+      .getElementById(
+        "answer"
+      )
       .innerText;
+
 
   if(!text){
 
     return;
+
   }
 
-  navigator.clipboard
-    .writeText(text)
-    .then(function(){
 
-      showToast(
-        "Answer copy ho gaya ✓"
-      );
+  if(
+    navigator.clipboard &&
+    navigator.clipboard.writeText
+  ){
 
-    })
-    .catch(function(){
+    navigator.clipboard
+      .writeText(text)
+      .then(function(){
 
-      showToast(
-        "Copy nahi ho paya"
-      );
+        showToast(
+          "Answer copy ho gaya ✓"
+        );
 
-    });
+      })
+      .catch(function(){
+
+        showToast(
+          "Copy nahi ho paya"
+        );
+
+      });
+
+  }else{
+
+    showToast(
+      "Copy supported nahi hai"
+    );
+
+  }
 
 }
 
@@ -1310,29 +1703,44 @@ function speakAnswer(){
 
   const text =
     document
-      .getElementById("answer")
+      .getElementById(
+        "answer"
+      )
       .innerText;
+
 
   if(!text){
 
     return;
+
   }
 
-  if(!("speechSynthesis" in window)){
+
+  if(
+    !("speechSynthesis" in window)
+  ){
 
     showToast(
       "Speech browser me supported nahi hai"
     );
 
     return;
+
   }
+
 
   window.speechSynthesis.cancel();
 
-  const speech =
-    new SpeechSynthesisUtterance(text);
 
-  speech.rate = 0.9;
+  const speech =
+    new SpeechSynthesisUtterance(
+      text
+    );
+
+
+  speech.rate =
+    0.9;
+
 
   window.speechSynthesis.speak(
     speech
