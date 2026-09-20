@@ -1,1610 +1,753 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
 <meta charset="UTF-8">
 
-<meta name="viewport"
-content="width=device-width, initial-scale=1.0">
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1.0, maximum-scale=1.0"
+>
 
-<meta name="description"
-content="Question AI - Ask questions, upload images and get educational step-by-step answers.">
+<title>Question AI</title>
 
-<meta name="robots"
-content="index, follow">
-
-<title>Question AI - Educational AI Assistant</title>
-
+<meta
+  name="description"
+  content="Question AI - Solve questions using text or images."
+>
 
 <style>
-
-*{
-  box-sizing:border-box;
-  margin:0;
-  padding:0;
-  font-family:Arial,sans-serif;
+* {
+  box-sizing: border-box;
 }
 
-html{
-  scroll-behavior:smooth;
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #f4f5fb;
+  color: #151515;
 }
 
-body{
-  background:#f4f7fb;
-  color:#172033;
+header {
+  background: linear-gradient(135deg,#6d28d9,#9333ea);
+  color: white;
+  padding: 24px 18px;
+  text-align: center;
 }
 
-.app{
-  max-width:720px;
-  margin:auto;
-  min-height:100vh;
-  background:white;
+header h1 {
+  margin: 0;
+  font-size: 30px;
 }
 
-.header{
-  background:linear-gradient(
-    135deg,
-    #7440ff,
-    #6335ff,
-    #4b20d9
-  );
-  color:white;
-  padding:25px 18px;
-  text-align:center;
+header p {
+  margin: 7px 0 0;
+  opacity: .9;
 }
 
-.header h1{
-  font-size:28px;
-  margin-bottom:7px;
+.container {
+  width: 100%;
+  max-width: 720px;
+  margin: auto;
+  padding: 16px;
 }
 
-.header p{
-  font-size:13px;
-  opacity:.9;
+.card {
+  background: white;
+  border-radius: 18px;
+  padding: 16px;
+  margin-bottom: 15px;
+  box-shadow: 0 5px 20px rgba(0,0,0,.07);
 }
 
-.section{
-  padding:15px;
+label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 8px;
 }
 
-.card{
-  background:white;
-  border:1px solid #e5e9f2;
-  border-radius:16px;
-  padding:15px;
-  margin-bottom:14px;
-  box-shadow:0 5px 18px rgba(30,40,80,.06);
+textarea {
+  width: 100%;
+  min-height: 130px;
+  border: 1px solid #ddd;
+  border-radius: 13px;
+  padding: 13px;
+  font-size: 16px;
+  resize: vertical;
+  outline: none;
 }
 
-label{
-  display:block;
-  font-size:14px;
-  font-weight:bold;
-  margin-bottom:9px;
+textarea:focus {
+  border-color: #7c3aed;
 }
 
-.subjects{
-  display:flex;
-  gap:7px;
-  overflow-x:auto;
-  padding-bottom:4px;
+.subjects,
+.options {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 5px;
 }
 
-.subjects button{
-  flex-shrink:0;
-  border:1px solid #ddd;
-  background:white;
-  color:#333;
-  border-radius:20px;
-  padding:9px 14px;
-  font-size:13px;
+.subject-btn,
+.option-btn {
+  border: 0;
+  background: #eee;
+  padding: 10px 14px;
+  border-radius: 20px;
+  white-space: nowrap;
+  cursor: pointer;
 }
 
-.subjects button.active{
-  background:#6735ff;
-  color:white;
-  border-color:#6735ff;
+.subject-btn.active,
+.option-btn.active {
+  background: #7c3aed;
+  color: white;
 }
 
-textarea{
-  width:100%;
-  min-height:170px;
-  resize:vertical;
-  border:1px solid #ddd;
-  border-radius:15px;
-  padding:16px;
-  font-size:18px;
-  outline:none;
+.upload {
+  display: block;
+  border: 2px dashed #bbb;
+  border-radius: 15px;
+  padding: 18px;
+  text-align: center;
+  cursor: pointer;
 }
 
-textarea:focus,
-select:focus{
-  border-color:#6735ff;
+.upload input {
+  display: none;
 }
 
-.upload{
-  margin-top:15px;
-  border:2px dashed #d6dbe6;
-  border-radius:16px;
-  padding:22px 15px;
-  text-align:center;
+#preview {
+  display: none;
+  width: 100%;
+  max-height: 350px;
+  object-fit: contain;
+  border-radius: 14px;
+  margin-top: 12px;
+  background: #f2f2f2;
 }
 
-.upload h3{
-  margin-bottom:10px;
+.solve-btn {
+  width: 100%;
+  border: 0;
+  border-radius: 15px;
+  padding: 16px;
+  font-size: 18px;
+  font-weight: bold;
+  color: white;
+  background: linear-gradient(135deg,#7c3aed,#9333ea);
+  cursor: pointer;
 }
 
-.upload p{
-  color:#777;
-  margin-bottom:15px;
+.solve-btn:disabled {
+  opacity: .6;
 }
 
-input[type="file"]{
-  width:100%;
-  font-size:16px;
+.status {
+  display: none;
+  text-align: center;
+  padding: 15px;
 }
 
-#preview{
-  display:none;
-  width:100%;
-  max-height:350px;
-  object-fit:contain;
-  margin-top:15px;
-  border-radius:12px;
-  border:1px solid #ddd;
+.spinner {
+  width: 25px;
+  height: 25px;
+  border: 3px solid #ddd;
+  border-top-color: #7c3aed;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: auto;
 }
 
-select{
-  width:100%;
-  padding:15px;
-  border:1px solid #ddd;
-  border-radius:14px;
-  font-size:16px;
-  background:white;
-  margin-bottom:14px;
-  outline:none;
-}
-
-.solve-btn{
-  width:100%;
-  border:0;
-  border-radius:15px;
-  padding:17px;
-  background:linear-gradient(
-    135deg,
-    #7038ff,
-    #6330f0
-  );
-  color:white;
-  font-size:18px;
-  font-weight:bold;
-  cursor:pointer;
-}
-
-.solve-btn:disabled{
-  opacity:.6;
-}
-
-.status{
-  display:none;
-  text-align:center;
-  padding:15px;
-  color:#6735ff;
-  font-weight:bold;
-}
-
-.spinner{
-  display:inline-block;
-  width:18px;
-  height:18px;
-  border:3px solid #ddd;
-  border-top-color:#6735ff;
-  border-radius:50%;
-  animation:spin 1s linear infinite;
-  vertical-align:middle;
-  margin-right:8px;
-}
-
-@keyframes spin{
-  to{
-    transform:rotate(360deg);
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
   }
 }
 
-.answer-card{
-  display:none;
+.answer {
+  display: none;
 }
 
-.answer{
-  white-space:pre-wrap;
-  line-height:1.7;
-  font-size:16px;
-  word-break:break-word;
+.answer-text {
+  white-space: pre-wrap;
+  line-height: 1.65;
+  font-size: 16px;
 }
 
-.answer-buttons{
-  display:flex;
-  gap:10px;
-  margin-top:15px;
+.actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 15px;
 }
 
-.answer-buttons button{
-  flex:1;
-  padding:12px;
-  border-radius:12px;
-  border:1px solid #ddd;
-  background:white;
-  font-weight:bold;
+.action-btn {
+  flex: 1;
+  border: 0;
+  padding: 12px;
+  border-radius: 12px;
+  cursor: pointer;
+  background: #eee;
 }
 
-.toast{
-  display:none;
-  position:fixed;
-  left:50%;
-  bottom:25px;
-  transform:translateX(-50%);
-  background:#202124;
-  color:white;
-  padding:12px 18px;
-  border-radius:25px;
-  z-index:9999;
-  max-width:90%;
-  text-align:center;
+.history-item {
+  padding: 12px;
+  border-bottom: 1px solid #eee;
 }
 
-.info-page{
-  display:none;
+.history-item:last-child {
+  border-bottom: 0;
 }
 
-.info-page h2{
-  margin-bottom:15px;
+.history-question {
+  font-weight: bold;
+  margin-bottom: 5px;
 }
 
-.info-page p{
-  line-height:1.7;
-  color:#444;
-  margin-bottom:15px;
+.small {
+  font-size: 13px;
+  color: #666;
 }
 
-.back-btn{
-  border:0;
-  background:#6735ff;
-  color:white;
-  padding:11px 18px;
-  border-radius:10px;
-  font-weight:bold;
-  margin-bottom:15px;
+footer {
+  text-align: center;
+  padding: 25px 10px;
+  color: #666;
+  font-size: 13px;
 }
 
-.footer{
-  padding:25px 15px;
-  text-align:center;
-  color:#777;
-  font-size:13px;
+footer button {
+  border: 0;
+  background: none;
+  color: #6d28d9;
+  cursor: pointer;
+  margin: 3px;
 }
-
-.footer button{
-  border:0;
-  background:none;
-  color:#6735ff;
-  margin:5px;
-  font-size:13px;
-}
-
-hr{
-  border:0;
-  border-top:1px solid #eee;
-  margin:15px 0;
-}
-
-@media(max-width:500px){
-
-  .header h1{
-    font-size:24px;
-  }
-
-  textarea{
-    font-size:17px;
-  }
-
-}
-
 </style>
-
 </head>
-
 
 <body>
 
+<header>
+  <h1>Question AI</h1>
+  <p>Ask questions. Upload images. Get AI answers.</p>
+</header>
 
-<div class="app">
+<div class="container">
+
+  <div class="card">
+
+    <label>Subject</label>
+
+    <div class="subjects">
+      <button class="subject-btn active"
+        onclick="selectSubject(this,'Auto')">Auto</button>
+
+      <button class="subject-btn"
+        onclick="selectSubject(this,'Maths')">Maths</button>
+
+      <button class="subject-btn"
+        onclick="selectSubject(this,'Physics')">Physics</button>
+
+      <button class="subject-btn"
+        onclick="selectSubject(this,'Chemistry')">Chemistry</button>
+
+      <button class="subject-btn"
+        onclick="selectSubject(this,'Biology')">Biology</button>
+
+      <button class="subject-btn"
+        onclick="selectSubject(this,'Hindi')">Hindi</button>
+
+      <button class="subject-btn"
+        onclick="selectSubject(this,'English')">English</button>
+    </div>
+
+  </div>
 
 
-<!-- =========================
-     HEADER
-========================= -->
+  <div class="card">
 
-<div class="header">
+    <label>Your Question</label>
 
-<h1>Question AI</h1>
+    <textarea
+      id="question"
+      placeholder="Type your question here..."
+    ></textarea>
 
-<p>
-Ask questions, upload images and get step-by-step answers
-</p>
+  </div>
+
+
+  <div class="card">
+
+    <label>Upload Question Image</label>
+
+    <label class="upload">
+      📷 Tap here to upload image
+      <br>
+      <span class="small">
+        JPG, PNG, WEBP, HEIC supported
+      </span>
+
+      <input
+        id="imageInput"
+        type="file"
+        accept="image/*,.heic,.heif"
+        onchange="handleImage(event)"
+      >
+    </label>
+
+    <img id="preview">
+
+  </div>
+
+
+  <div class="card">
+
+    <label>Answer Language</label>
+
+    <div class="options">
+
+      <button
+        class="option-btn active"
+        onclick="selectLanguage(this,'Hindi')"
+      >Hindi</button>
+
+      <button
+        class="option-btn"
+        onclick="selectLanguage(this,'English')"
+      >English</button>
+
+      <button
+        class="option-btn"
+        onclick="selectLanguage(this,'Hinglish')"
+      >Hinglish</button>
+
+    </div>
+
+    <br>
+
+    <label>Level</label>
+
+    <div class="options">
+
+      <button
+        class="option-btn active"
+        onclick="selectLevel(this,'School')"
+      >School</button>
+
+      <button
+        class="option-btn"
+        onclick="selectLevel(this,'Class 6-8')"
+      >6-8</button>
+
+      <button
+        class="option-btn"
+        onclick="selectLevel(this,'Class 9-10')"
+      >9-10</button>
+
+      <button
+        class="option-btn"
+        onclick="selectLevel(this,'Class 11-12')"
+      >11-12</button>
+
+      <button
+        class="option-btn"
+        onclick="selectLevel(this,'College')"
+      >College</button>
+
+    </div>
+
+  </div>
+
+
+  <div class="card">
+
+    <button
+      id="solveButton"
+      class="solve-btn"
+      onclick="solveQuestion()"
+    >
+      ✨ Solve Question
+    </button>
+
+    <div id="status" class="status">
+
+      <div class="spinner"></div>
+
+      <p>AI is solving your question...</p>
+
+    </div>
+
+  </div>
+
+
+  <div id="answerCard" class="card answer">
+
+    <label>Answer</label>
+
+    <div
+      id="answerText"
+      class="answer-text"
+    ></div>
+
+    <div class="actions">
+
+      <button
+        class="action-btn"
+        onclick="copyAnswer()"
+      >
+        📋 Copy
+      </button>
+
+      <button
+        class="action-btn"
+        onclick="speakAnswer()"
+      >
+        🔊 Speak
+      </button>
+
+    </div>
+
+  </div>
+
+
+  <div class="card">
+
+    <label>Recent History</label>
+
+    <div id="history">
+      <div class="small">
+        Your solved questions will appear here.
+      </div>
+    </div>
+
+    <br>
+
+    <button
+      class="action-btn"
+      onclick="clearHistory()"
+    >
+      Clear History
+    </button>
+
+  </div>
 
 </div>
 
 
-<!-- =========================
-     MAIN PAGE
-========================= -->
+<footer>
 
-<div id="mainPage">
+  <div>
+    © 2026 Question AI
+  </div>
 
+  <div>
 
-<div class="section">
+    <button onclick="showInfo('About')">
+      About
+    </button>
 
+    <button onclick="showInfo('Contact')">
+      Contact
+    </button>
 
-<!-- SUBJECT -->
+    <button onclick="showInfo('Privacy Policy')">
+      Privacy
+    </button>
 
-<div class="card">
+    <button onclick="showInfo('Terms')">
+      Terms
+    </button>
 
-<label>Subject</label>
+  </div>
 
-<div class="subjects">
+</footer>
 
-<button
-class="active"
-onclick="selectSubject(this,'Auto')">
-Auto
-</button>
 
-<button
-onclick="selectSubject(this,'Maths')">
-Maths
-</button>
-
-<button
-onclick="selectSubject(this,'Physics')">
-Physics
-</button>
-
-<button
-onclick="selectSubject(this,'Chemistry')">
-Chemistry
-</button>
-
-<button
-onclick="selectSubject(this,'Biology')">
-Biology
-</button>
-
-<button
-onclick="selectSubject(this,'Hindi')">
-Hindi
-</button>
-
-<button
-onclick="selectSubject(this,'English')">
-English
-</button>
-
-</div>
-
-</div>
-
-
-<!-- QUESTION -->
-
-<div class="card">
-
-<label>Apna Question</label>
-
-<textarea
-id="question"
-placeholder="Example: 253 + 5 = ?"></textarea>
-
-
-<!-- IMAGE -->
-
-<div class="upload">
-
-<h3>
-Question ki image upload karo
-</h3>
-
-<p>
-Maths, Physics, Chemistry, Biology etc.
-</p>
-
-<input
-type="file"
-id="imageInput"
-accept="image/*,.heic,.heif"
-onchange="handleImage(event)">
-
-
-<img
-id="preview"
-alt="Uploaded question preview">
-
-</div>
-
-</div>
-
-
-<!-- LANGUAGE + LEVEL -->
-
-<div class="card">
-
-<label>Language</label>
-
-<select id="language">
-
-<option value="Hindi">
-Hindi
-</option>
-
-<option value="English">
-English
-</option>
-
-<option value="Hinglish">
-Hinglish
-</option>
-
-</select>
-
-
-<label>Level</label>
-
-<select id="level">
-
-<option value="School">
-School
-</option>
-
-<option value="Class 6-8">
-Class 6-8
-</option>
-
-<option value="Class 9-10">
-Class 9-10
-</option>
-
-<option value="Class 11-12">
-Class 11-12
-</option>
-
-<option value="College">
-College
-</option>
-
-</select>
-
-
-<button
-id="solveBtn"
-class="solve-btn"
-onclick="solveQuestion()">
-
-Solve Question
-
-</button>
-
-</div>
-
-
-<!-- STATUS -->
-
-<div
-id="status"
-class="status">
-
-<span class="spinner"></span>
-
-AI question solve kar raha hai...
-
-</div>
-
-
-<!-- ANSWER -->
-
-<div
-id="answerCard"
-class="card answer-card">
-
-<label>Answer</label>
-
-<div
-id="answer"
-class="answer">
-</div>
-
-
-<div class="answer-buttons">
-
-<button onclick="copyAnswer()">
-Copy
-</button>
-
-<button onclick="speakAnswer()">
-Speak
-</button>
-
-</div>
-
-</div>
-
-
-</div>
-
-</div>
-
-
-<!-- =========================
-     ABOUT
-========================= -->
-
-<div
-id="aboutPage"
-class="info-page">
-
-<div class="section">
-
-<button
-class="back-btn"
-onclick="showMain()">
-← Back
-</button>
-
-<div class="card">
-
-<h2>About Question AI</h2>
-
-<p>
-Question AI is an educational AI assistant
-designed to help students understand questions
-with simple and step-by-step explanations.
-</p>
-
-<p>
-You can type a question or upload a question
-image and ask the AI to solve it.
-</p>
-
-</div>
-
-</div>
-
-</div>
-
-
-<!-- =========================
-     CONTACT
-========================= -->
-
-<div
-id="contactPage"
-class="info-page">
-
-<div class="section">
-
-<button
-class="back-btn"
-onclick="showMain()">
-← Back
-</button>
-
-<div class="card">
-
-<h2>Contact</h2>
-
-<p>
-For questions, feedback or technical issues,
-please use the contact information provided
-by the website owner.
-</p>
-
-<p>
-We appreciate your feedback and suggestions.
-</p>
-
-</div>
-
-</div>
-
-</div>
-
-
-<!-- =========================
-     PRIVACY
-========================= -->
-
-<div
-id="privacyPage"
-class="info-page">
-
-<div class="section">
-
-<button
-class="back-btn"
-onclick="showMain()">
-← Back
-</button>
-
-<div class="card">
-
-<h2>Privacy Policy</h2>
-
-<p>
-Question AI is an educational application.
-Questions and uploaded images may be processed
-by the AI service to generate answers.
-</p>
-
-<p>
-Do not upload sensitive personal information,
-passwords, financial information or other
-private documents.
-</p>
-
-<p>
-The application does not ask users to enter
-their personal AI API key.
-The AI service is configured on the server.
-</p>
-
-</div>
-
-</div>
-
-</div>
-
-
-<!-- =========================
-     TERMS
-========================= -->
-
-<div
-id="termsPage"
-class="info-page">
-
-<div class="section">
-
-<button
-class="back-btn"
-onclick="showMain()">
-← Back
-</button>
-
-<div class="card">
-
-<h2>Terms & Conditions</h2>
-
-<p>
-Question AI is provided as an educational
-assistance tool.
-</p>
-
-<p>
-AI answers may occasionally contain mistakes.
-Students should verify important information
-with their teachers, textbooks or other trusted
-educational sources.
-</p>
-
-<p>
-Do not use the service for harmful, illegal or
-fraudulent activities.
-</p>
-
-</div>
-
-</div>
-
-</div>
-
-
-<!-- =========================
-     FOOTER
-========================= -->
-
-<div class="footer">
-
-<hr>
-
-<button onclick="showPage('aboutPage')">
-About
-</button>
-
-<button onclick="showPage('contactPage')">
-Contact
-</button>
-
-<button onclick="showPage('privacyPage')">
-Privacy Policy
-</button>
-
-<button onclick="showPage('termsPage')">
-Terms & Conditions
-</button>
-
-<p>
-© 2026 Question AI
-</p>
-
-</div>
-
-
-</div>
-
-
-<!-- TOAST -->
-
-<div
-id="toast"
-class="toast">
-</div>
-
+<script src="https://cdn.jsdelivr.net/npm/heic2any@0.0.4/dist/heic2any.min.js"></script>
 
 <script>
 
+let selectedSubject = "Auto";
+let selectedLanguage = "Hindi";
+let selectedLevel = "School";
 
-// =========================
-// GLOBAL VARIABLES
-// =========================
+let imageBase64 = "";
+let imageMime = "";
 
-let selectedSubject =
-"Auto";
+let currentAnswer = "";
 
-let imageBase64 =
-"";
 
-let imageMime =
-"";
-
-
-// =========================
-// HEIC CONVERTER
-// =========================
-
-function loadHEICConverter(){
-
-  return new Promise(
-    function(resolve,reject){
-
-      if(
-        typeof heic2any !==
-        "undefined"
-      ){
-
-        resolve();
-
-        return;
-
-      }
-
-
-      const script =
-        document.createElement(
-          "script"
-        );
-
-
-      script.src =
-        "https://cdn.jsdelivr.net/npm/heic2any@0.0.4/dist/heic2any.min.js";
-
-
-      script.onload =
-        function(){
-
-          resolve();
-
-        };
-
-
-      script.onerror =
-        function(){
-
-          reject(
-            new Error(
-              "HEIC converter load nahi hua."
-            )
-          );
-
-        };
-
-
-      document.head.appendChild(
-        script
-      );
-
-    }
-  );
-
-}
-
-
-// =========================
-// PAGE NAVIGATION
-// =========================
-
-function showPage(pageId){
-
-  document.getElementById(
-    "mainPage"
-  ).style.display =
-    "none";
-
-  document.getElementById(
-    "aboutPage"
-  ).style.display =
-    "none";
-
-  document.getElementById(
-    "contactPage"
-  ).style.display =
-    "none";
-
-  document.getElementById(
-    "privacyPage"
-  ).style.display =
-    "none";
-
-  document.getElementById(
-    "termsPage"
-  ).style.display =
-    "none";
-
-
-  document.getElementById(
-    pageId
-  ).style.display =
-    "block";
-
-
-  window.scrollTo(
-    0,
-    0
-  );
-
-}
-
-
-function showMain(){
-
-  document.getElementById(
-    "mainPage"
-  ).style.display =
-    "block";
-
-  document.getElementById(
-    "aboutPage"
-  ).style.display =
-    "none";
-
-  document.getElementById(
-    "contactPage"
-  ).style.display =
-    "none";
-
-  document.getElementById(
-    "privacyPage"
-  ).style.display =
-    "none";
-
-  document.getElementById(
-    "termsPage"
-  ).style.display =
-    "none";
-
-
-  window.scrollTo(
-    0,
-    0
-  );
-
-}
-
-
-// =========================
-// TOAST
-// =========================
-
-function showToast(message){
-
-  const toast =
-    document.getElementById(
-      "toast"
-    );
-
-
-  toast.innerText =
-    message;
-
-
-  toast.style.display =
-    "block";
-
-
-  setTimeout(
-    function(){
-
-      toast.style.display =
-        "none";
-
-    },
-    3000
-  );
-
-}
-
-
-// =========================
-// SUBJECT
-// =========================
-
-function selectSubject(
-  button,
-  subject
-){
-
-  selectedSubject =
-    subject;
-
+function selectSubject(button, value) {
 
   document
-    .querySelectorAll(
-      ".subjects button"
-    )
-    .forEach(
-      function(btn){
+    .querySelectorAll(".subject-btn")
+    .forEach(b => b.classList.remove("active"));
 
-        btn.classList.remove(
-          "active"
-        );
+  button.classList.add("active");
 
-      }
-    );
-
-
-  button.classList.add(
-    "active"
-  );
-
+  selectedSubject = value;
 }
 
 
-// =========================
-// IMAGE UPLOAD
-// HEIC + HEIF + JPG + PNG
-// =========================
+function selectLanguage(button, value) {
 
-async function handleImage(event){
+  document
+    .querySelectorAll(".card:nth-of-type(4) .option-btn")
+    .forEach(b => b.classList.remove("active"));
 
-  const file =
-    event.target.files[0];
+  button.classList.add("active");
 
-
-  if(!file){
-
-    imageBase64 =
-      "";
-
-    imageMime =
-      "";
-
-    return;
-
-  }
+  selectedLanguage = value;
+}
 
 
-  try{
+function selectLevel(button, value) {
 
-    let uploadFile =
-      file;
+  const buttons =
+    document.querySelectorAll(".option-btn");
+
+  buttons.forEach(b => {
+
+    if (
+      ["School","6-8","9-10","11-12","College"]
+      .includes(b.innerText)
+    ) {
+      b.classList.remove("active");
+    }
+
+  });
+
+  button.classList.add("active");
+
+  selectedLevel = value;
+}
 
 
-    const fileName =
+async function handleImage(event) {
+
+  const file = event.target.files[0];
+
+  if (!file) return;
+
+  try {
+
+    let inputFile = file;
+
+    const name =
       file.name.toLowerCase();
 
+    if (
+      name.endsWith(".heic") ||
+      name.endsWith(".heif")
+    ) {
 
-    const isHEIC =
-      fileName.endsWith(
-        ".heic"
-      ) ||
-      fileName.endsWith(
-        ".heif"
-      ) ||
-      file.type ===
-        "image/heic" ||
-      file.type ===
-        "image/heif";
-
-
-    // =========================
-    // HEIC → JPEG
-    // =========================
-
-    if(isHEIC){
-
-      showToast(
-        "HEIC photo convert ho rahi hai..."
-      );
-
-
-      await loadHEICConverter();
-
+      if (
+        typeof heic2any === "undefined"
+      ) {
+        throw new Error(
+          "HEIC converter load nahi hua."
+        );
+      }
 
       const converted =
         await heic2any({
-
-          blob:
-            file,
-
-          toType:
-            "image/jpeg",
-
-          quality:
-            0.82
-
+          blob: file,
+          toType: "image/jpeg",
+          quality: 0.85
         });
 
-
-      uploadFile =
-        Array.isArray(
-          converted
-        )
-        ? converted[0]
-        : converted;
-
+      inputFile =
+        Array.isArray(converted)
+          ? converted[0]
+          : converted;
     }
 
-
-    // =========================
-    // IMAGE CHECK
-    // =========================
-
-    if(
-      !isHEIC &&
-      !file.type.startsWith(
-        "image/"
-      )
-    ){
-
-      showToast(
-        "Sirf image upload karo"
-      );
-
-      event.target.value =
-        "";
-
-      return;
-
-    }
-
-
-    // =========================
-    // READ FILE
-    // =========================
 
     const reader =
       new FileReader();
 
+    reader.onload = function(e) {
 
-    reader.onload =
-      function(e){
+      const img =
+        new Image();
 
-        const img =
-          new Image();
+      img.onload = function() {
 
+        const maxSize = 1600;
 
-        img.onload =
-          function(){
+        let width = img.width;
+        let height = img.height;
 
-            const maxSize =
-              1600;
+        if (width > maxSize || height > maxSize) {
 
-
-            let width =
-              img.width;
-
-            let height =
-              img.height;
-
-
-            // =========================
-            // RESIZE
-            // =========================
-
-            if(
-              width > maxSize ||
-              height > maxSize
-            ){
-
-              if(
-                width > height
-              ){
-
-                height =
-                  Math.round(
-                    height *
-                    maxSize /
-                    width
-                  );
-
-                width =
-                  maxSize;
-
-              }else{
-
-                width =
-                  Math.round(
-                    width *
-                    maxSize /
-                    height
-                  );
-
-                height =
-                  maxSize;
-
-              }
-
-            }
-
-
-            // =========================
-            // CANVAS
-            // =========================
-
-            const canvas =
-              document.createElement(
-                "canvas"
-              );
-
-
-            canvas.width =
-              width;
-
-            canvas.height =
-              height;
-
-
-            const ctx =
-              canvas.getContext(
-                "2d"
-              );
-
-
-            ctx.drawImage(
-              img,
-              0,
-              0,
-              width,
-              height
+          const scale =
+            Math.min(
+              maxSize / width,
+              maxSize / height
             );
 
+          width =
+            Math.round(width * scale);
 
-            // =========================
-            // JPEG
-            // =========================
+          height =
+            Math.round(height * scale);
+        }
 
-            const compressed =
-              canvas.toDataURL(
-                "image/jpeg",
-                0.82
-              );
+        const canvas =
+          document.createElement("canvas");
 
+        canvas.width = width;
+        canvas.height = height;
 
-            imageBase64 =
-              compressed.split(
-                ","
-              )[1];
+        const ctx =
+          canvas.getContext("2d");
 
-
-            imageMime =
-              "image/jpeg";
-
-
-            // =========================
-            // PREVIEW
-            // =========================
-
-            const preview =
-              document.getElementById(
-                "preview"
-              );
-
-
-            preview.src =
-              compressed;
-
-
-            preview.style.display =
-              "block";
-
-
-            showToast(
-              "Image ready ✓"
-            );
-
-          };
-
-
-        img.onerror =
-          function(){
-
-            imageBase64 =
-              "";
-
-            imageMime =
-              "";
-
-
-            showToast(
-              "Photo read nahi ho paayi. JPG/PNG try karo."
-            );
-
-          };
-
-
-        img.src =
-          e.target.result;
-
-      };
-
-
-    reader.onerror =
-      function(){
-
-        imageBase64 =
-          "";
-
-        imageMime =
-          "";
-
-
-        showToast(
-          "Photo read nahi ho paayi."
+        ctx.drawImage(
+          img,
+          0,
+          0,
+          width,
+          height
         );
 
+        const compressed =
+          canvas.toDataURL(
+            "image/jpeg",
+            0.82
+          );
+
+        imageBase64 =
+          compressed.split(",")[1];
+
+        imageMime =
+          "image/jpeg";
+
+        const preview =
+          document.getElementById("preview");
+
+        preview.src =
+          compressed;
+
+        preview.style.display =
+          "block";
       };
 
+      img.src = e.target.result;
+    };
 
-    reader.readAsDataURL(
-      uploadFile
+    reader.readAsDataURL(inputFile);
+
+  } catch (error) {
+
+    alert(
+      "Image process nahi ho payi: " +
+      error.message
     );
-
-
-  }catch(error){
-
-    console.error(
-      "Image upload error:",
-      error
-    );
-
-
-    imageBase64 =
-      "";
-
-    imageMime =
-      "";
-
-
-    showToast(
-      "HEIC photo convert nahi ho paayi. JPG/PNG try karo."
-    );
-
-
-    event.target.value =
-      "";
 
   }
-
 }
 
 
-// =========================
-// CLEAN AI ANSWER
-// =========================
+function cleanAIAnswer(text) {
 
-function cleanAIAnswer(text){
-
-  if(!text){
-
-    return "";
-
-  }
-
+  if (!text) return "";
 
   return text
-
-    .replace(
-      /```[a-zA-Z]*\n?/g,
-      ""
-    )
-
-    .replace(
-      /```/g,
-      ""
-    )
-
-    .replace(
-      /\$\$/g,
-      ""
-    )
-
-    .replace(
-      /\$/g,
-      ""
-    )
-
-    .replace(
-      /\*\*/g,
-      ""
-    )
-
-    .replace(
-      /\*/g,
-      ""
-    )
-
-    .replace(
-      /^#{1,6}\s*/gm,
-      ""
-    )
-
-    .replace(
-      /\\text\{([^}]*)\}/g,
-      "$1"
-    )
-
-    .replace(
-      /\\mathrm\{([^}]*)\}/g,
-      "$1"
-    )
-
-    .replace(
-      /\\mathbf\{([^}]*)\}/g,
-      "$1"
-    )
-
-    .replace(
-      /\\frac\{([^}]*)\}\{([^}]*)\}/g,
-      "$1/$2"
-    )
-
-    .replace(
-      /\\quad/g,
-      " "
-    )
-
-    .replace(
-      /\\qquad/g,
-      " "
-    )
-
-    .replace(
-      /\\,/g,
-      " "
-    )
-
-    .replace(
-      /\\;/g,
-      " "
-    )
-
-    .replace(
-      /\\!/g,
-      ""
-    )
-
-    .replace(
-      /\\left/g,
-      ""
-    )
-
-    .replace(
-      /\\right/g,
-      ""
-    )
-
-    .replace(
-      /\\begin\{[^}]*\}/g,
-      ""
-    )
-
-    .replace(
-      /\\end\{[^}]*\}/g,
-      ""
-    )
-
-    .replace(
-      /[ \t]+/g,
-      " "
-    )
-
-    .replace(
-      /\n{3,}/g,
-      "\n\n"
-    )
-
+    .replace(/```[\s\S]*?```/g, "")
+    .replace(/\$\$([\s\S]*?)\$\$/g, "$1")
+    .replace(/\$([^$]+)\$/g, "$1")
+    .replace(/\\frac/g, "fraction")
+    .replace(/\\sqrt/g, "√")
+    .replace(/\\times/g, "×")
+    .replace(/\\div/g, "÷")
+    .replace(/\\cdot/g, "·")
+    .replace(/\\approx/g, "≈")
     .trim();
-
 }
 
 
-// =========================
-// SOLVE QUESTION
-// =========================
-
-async function solveQuestion(){
+async function solveQuestion() {
 
   const question =
     document
-      .getElementById(
-        "question"
-      )
+      .getElementById("question")
       .value
       .trim();
 
+  if (!question && !imageBase64) {
 
-  const language =
-    document
-      .getElementById(
-        "language"
-      )
-      .value;
-
-
-  const level =
-    document
-      .getElementById(
-        "level"
-      )
-      .value;
-
-
-  if(
-    !question &&
-    !imageBase64
-  ){
-
-    showToast(
-      "Question ya image do"
+    alert(
+      "Question likho ya image upload karo."
     );
 
     return;
-
   }
 
+  const solveButton =
+    document.getElementById("solveButton");
 
   const status =
-    document.getElementById(
-      "status"
-    );
-
+    document.getElementById("status");
 
   const answerCard =
-    document.getElementById(
-      "answerCard"
-    );
+    document.getElementById("answerCard");
 
+  const answerText =
+    document.getElementById("answerText");
 
-  const answer =
-    document.getElementById(
-      "answer"
-    );
-
-
-  const solveBtn =
-    document.getElementById(
-      "solveBtn"
-    );
-
+  solveButton.disabled = true;
 
   status.style.display =
     "block";
 
-
   answerCard.style.display =
     "none";
 
+  try {
 
-  solveBtn.disabled =
-    true;
+    const instruction = `
+You are Question AI, a helpful educational tutor.
 
+Subject: ${selectedSubject}
+Student level: ${selectedLevel}
+Answer language: ${selectedLanguage}
 
-  const instruction = `
+Solve the student's question accurately.
 
-You are Question AI, a helpful educational assistant.
+If an image is attached:
+- Read the question from the image.
+- Solve exactly what is visible.
+- Do not invent missing information.
 
-Subject:
-${selectedSubject}
+For mathematics/science:
+- Show clear steps.
+- Explain formulas simply.
+- Give the final answer clearly.
 
-Student level:
-${level}
+For other subjects:
+- Give a clear, understandable explanation.
 
-Answer language:
-${language}
-
-Rules:
-
-1. Solve the student's question accurately.
-
-2. If it is a maths or science problem,
-show the method step by step.
-
-3. Explain formulas clearly.
-
-4. Keep the explanation easy to understand.
-
-5. If an image is provided,
-carefully read the question from the image.
-
-6. Do not invent information that is not visible in the image.
-
-7. Give the final answer clearly at the end.
-
-8. For Hindi use simple Hindi.
-
-9. For Hinglish use easy Hindi written with English letters.
-
-10. Do not unnecessarily make the answer extremely long.
-
-11. Use plain text only.
-
-12. NEVER use $ or $$.
-
-13. NEVER use LaTeX.
-
-14. NEVER use Markdown bold using **.
-
-15. NEVER use Markdown headings using #.
-
-16. NEVER use \\frac, \\quad, \\begin or \\end.
-
-17. Write mathematical calculations in simple plain text.
-
-18. Example:
-23 + 2 = 25
-
-19. Do not put the answer inside a code block.
-
-20. Do not use complicated formatting.
-
-21. Make the final answer easy to read on a mobile phone.
+Do not mention that you are an AI.
+Do not ask for an API key.
+Keep the answer educational and easy to understand.
 
 Student question:
-
-${question || "Please solve the question shown in the uploaded image."}
-
+${question || "(Question is in the uploaded image)"}
 `;
 
-
-  try{
-
     const parts = [
-
       {
-        text:
-          instruction
+        text: instruction
       }
-
     ];
 
 
-    // =========================
-    // ADD IMAGE
-    // =========================
-
-    if(imageBase64){
+    if (imageBase64) {
 
       parts.push({
 
-        inline_data:{
+        inline_data: {
 
           mime_type:
             imageMime,
@@ -1619,133 +762,57 @@ ${question || "Please solve the question shown in the uploaded image."}
     }
 
 
-    // =========================
-    // SAME VERCEL PROJECT API
-    // =========================
-
     const response =
       await fetch(
         "/api/gemini",
         {
+          method: "POST",
 
-          method:
-            "POST",
-
-          headers:{
+          headers: {
             "Content-Type":
               "application/json"
           },
 
           body:
             JSON.stringify({
-
-              contents:[
-
+              contents: [
                 {
-
-                  role:
-                    "user",
-
-                  parts:
-                    parts
-
+                  role: "user",
+                  parts: parts
                 }
-
               ]
-
             })
-
         }
       );
 
 
-    let data;
+    const data =
+      await response.json();
 
 
-    try{
+    if (!response.ok) {
 
-      data =
-        await response.json();
+      const message =
+        data?.error?.message ||
+        data?.error ||
+        "AI request failed.";
 
-    }catch(e){
-
-      throw new Error(
-        "Server ne valid response nahi diya."
-      );
-
+      throw new Error(message);
     }
 
 
-    if(!response.ok){
-
-      let message =
-        "Gemini API error";
+    const generatedParts =
+      data?.candidates?.[0]?.content?.parts || [];
 
 
-      if(
-        data &&
-        data.error
-      ){
-
-        if(
-          typeof data.error ===
-          "string"
-        ){
-
-          message =
-            data.error;
-
-        }else if(
-          data.error.message
-        ){
-
-          message =
-            data.error.message;
-
-        }
-
-      }
+    const result =
+      generatedParts
+        .map(part => part.text || "")
+        .join("\n")
+        .trim();
 
 
-      throw new Error(
-        message
-      );
-
-    }
-
-
-    let result =
-      "";
-
-
-    if(
-      data &&
-      data.candidates &&
-      data.candidates[0] &&
-      data.candidates[0].content &&
-      data.candidates[0].content.parts
-    ){
-
-      data.candidates[0]
-        .content
-        .parts
-        .forEach(
-          function(part){
-
-            if(part.text){
-
-              result +=
-                part.text;
-
-            }
-
-          }
-        );
-
-    }
-
-
-    if(!result){
+    if (!result) {
 
       throw new Error(
         "AI ne koi answer return nahi kiya."
@@ -1754,188 +821,213 @@ ${question || "Please solve the question shown in the uploaded image."}
     }
 
 
-    const cleanResult =
-      cleanAIAnswer(
-        result
-      );
+    currentAnswer =
+      cleanAIAnswer(result);
 
-
-    answer.innerText =
-      cleanResult;
-
+    answerText.innerText =
+      currentAnswer;
 
     answerCard.style.display =
       "block";
 
-
-  }catch(error){
-
-    console.error(
-      "Question AI Error:",
-      error
+    saveHistory(
+      question ||
+      "Image question",
+      currentAnswer
     );
 
+    window.scrollTo({
+      top:
+        answerCard.offsetTop - 20,
+      behavior:
+        "smooth"
+    });
 
-    answer.innerText =
+
+  } catch (error) {
+
+    currentAnswer = "";
+
+    answerText.innerText =
       "Error: " +
-      (
-        error.message ||
-        "Request failed"
-      );
-
+      error.message;
 
     answerCard.style.display =
       "block";
 
+  } finally {
+
+    solveButton.disabled =
+      false;
+
+    status.style.display =
+      "none";
   }
-
-
-  status.style.display =
-    "none";
-
-
-  solveBtn.disabled =
-    false;
-
 }
 
 
-// =========================
-// COPY ANSWER
-// =========================
+async function copyAnswer() {
 
-function copyAnswer(){
+  if (!currentAnswer) return;
 
-  const text =
-    document
-      .getElementById(
-        "answer"
-      )
-      .innerText;
+  try {
 
+    await navigator.clipboard.writeText(
+      currentAnswer
+    );
 
-  if(!text){
+    alert("Answer copied!");
 
-    return;
+  } catch {
 
-  }
-
-
-  if(
-    navigator.clipboard &&
-    navigator.clipboard.writeText
-  ){
-
-    navigator.clipboard
-      .writeText(text)
-      .then(
-        function(){
-
-          showToast(
-            "Answer copy ho gaya ✓"
-          );
-
-        }
-      )
-      .catch(
-        function(){
-
-          showToast(
-            "Copy nahi ho paya"
-          );
-
-        }
-      );
-
-  }else{
-
-    showToast(
-      "Copy supported nahi hai"
+    alert(
+      "Copy nahi ho paya."
     );
 
   }
-
 }
 
 
-// =========================
-// SPEAK ANSWER
-// =========================
+function speakAnswer() {
 
-function speakAnswer(){
-
-  const text =
-    document
-      .getElementById(
-        "answer"
-      )
-      .innerText;
-
-
-  if(!text){
-
-    return;
-
-  }
-
-
-  if(
-    !(
-      "speechSynthesis"
-      in window
-    )
-  ){
-
-    showToast(
-      "Speech browser me supported nahi hai"
-    );
-
-    return;
-
-  }
-
+  if (!currentAnswer) return;
 
   window.speechSynthesis.cancel();
 
-
   const speech =
     new SpeechSynthesisUtterance(
-      text
+      currentAnswer
     );
 
+  speech.lang =
+    selectedLanguage === "Hindi"
+      ? "hi-IN"
+      : "en-IN";
 
-  speech.rate =
-    0.9;
-
-
-  const language =
-    document
-      .getElementById(
-        "language"
-      )
-      .value;
-
-
-  if(language === "Hindi"){
-
-    speech.lang =
-      "hi-IN";
-
-  }else{
-
-    speech.lang =
-      "en-IN";
-
-  }
-
+  speech.rate = 0.9;
 
   window.speechSynthesis.speak(
     speech
   );
-
 }
+
+
+function saveHistory(question, answer) {
+
+  let history =
+    JSON.parse(
+      localStorage.getItem(
+        "questionAIHistory"
+      ) || "[]"
+    );
+
+  history.unshift({
+    question: question,
+    answer: answer,
+    time: new Date().toLocaleString()
+  });
+
+  history =
+    history.slice(0, 10);
+
+  localStorage.setItem(
+    "questionAIHistory",
+    JSON.stringify(history)
+  );
+
+  renderHistory();
+}
+
+
+function renderHistory() {
+
+  const container =
+    document.getElementById("history");
+
+  let history =
+    JSON.parse(
+      localStorage.getItem(
+        "questionAIHistory"
+      ) || "[]"
+    );
+
+  if (!history.length) {
+
+    container.innerHTML =
+      '<div class="small">Your solved questions will appear here.</div>';
+
+    return;
+  }
+
+  container.innerHTML =
+    history.map(item => `
+
+      <div class="history-item">
+
+        <div class="history-question">
+          ${escapeHTML(item.question)}
+        </div>
+
+        <div class="small">
+          ${escapeHTML(item.time)}
+        </div>
+
+      </div>
+
+    `).join("");
+}
+
+
+function clearHistory() {
+
+  localStorage.removeItem(
+    "questionAIHistory"
+  );
+
+  renderHistory();
+}
+
+
+function escapeHTML(text) {
+
+  return String(text)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
+
+function showInfo(title) {
+
+  const pages = {
+
+    "About":
+      "Question AI helps students solve questions using text and images.",
+
+    "Contact":
+      "Contact: Add your support email here before publishing.",
+
+    "Privacy Policy":
+      "Question AI processes submitted questions to provide answers. Do not upload sensitive personal information.",
+
+    "Terms":
+      "Question AI is an educational assistance tool. Always verify important answers with a teacher or trusted source."
+
+  };
+
+  alert(
+    title +
+    "\n\n" +
+    pages[title]
+  );
+}
+
+
+renderHistory();
 
 </script>
 
 </body>
-  </html>
+</html>
