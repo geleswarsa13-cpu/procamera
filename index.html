@@ -1162,44 +1162,25 @@ ${question || "Please solve the question shown in the uploaded image."}
 
     }
 
-    const response =
-      await fetch(
+    const response = await fetch(
+  "https://question-ai-phi.vercel.app/api/gemini",
+  {
+    method: "POST",
 
-        "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent",
+    headers: {
+      "Content-Type": "application/json"
+    },
 
+    body: JSON.stringify({
+      contents: [
         {
-
-          method:"POST",
-
-          headers:{
-
-            "Content-Type":
-              "application/json",
-
-            "x-goog-api-key":
-              key
-
-          },
-
-          body:JSON.stringify({
-
-            contents:[
-
-              {
-
-                role:"user",
-
-                parts:parts
-
-              }
-
-            ]
-
-          })
-
+          role: "user",
+          parts: parts
         }
-
-      );
+      ]
+    })
+  }
+);
 
     const data =
       await response.json();
